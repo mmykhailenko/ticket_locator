@@ -1,0 +1,15 @@
+
+
+# Create a virtual environment to isolate our package dependencies locally
+python3 -m venv env
+source env/bin/activate  # On Windows use `env\Scripts\activate`
+pip install requirements.txt
+
+# Create your local DB migration
+python manage.py migrate
+
+# Run server
+python manage.py runserver
+
+# Open browser by link
+http://127.0.0.1:8000/
