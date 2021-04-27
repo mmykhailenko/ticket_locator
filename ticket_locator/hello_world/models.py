@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
-from django import forms
 
 
 class User(models.Model):
@@ -35,14 +34,3 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.departure_city} -> {self.arrival_city}"
-
-
-from django import forms
-
-
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ['email', 'password']
