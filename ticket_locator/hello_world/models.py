@@ -3,10 +3,10 @@ from django.db import models
 # Create your models here.
 
 class User(models.Model):
-    email = models.EmailField() #(email)
-    password = models.CharField(max_length=120)  #(hash)
-    role = models.IntegerField()  #(id of role, related field with Role model)
-    active = models.BooleanField()  #(bool, True if user available)
+    email = models.EmailField()
+    password = models.CharField(max_length=120)
+    role = models.IntegerField()
+    active = models.BooleanField()
 
 class SearchHistory(models.Model):
     depart_city = models.CharField(max_length=30)
