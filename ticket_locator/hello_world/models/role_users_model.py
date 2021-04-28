@@ -28,8 +28,10 @@ class UserRoleAdmin(admin.ModelAdmin):
     save_as = True
 
     def show_action_set_url(self, obj):
+        """Creates a link to the change action_set"""
         actions_set_id= obj.actions_set.id
-        return format_html("<a href='/admin/hello_world/actionsset/{url}/change'>{name}</a>",
+        return format_html("<a href='/admin/hello_world/actionsset/{url}'>{name}</a>",
                            url=actions_set_id, name=obj.actions_set)
 
     show_action_set_url.allow_tags = True
+    show_action_set_url.short_description = 'Actions set'

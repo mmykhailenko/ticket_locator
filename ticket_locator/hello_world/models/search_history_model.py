@@ -22,12 +22,11 @@ class SearchHistory(models.Model):
         return str(self.user_id).upper()
 
 
-
 class SearchHistoryAdmin(admin.ModelAdmin):
     fieldsets = [
-        ("User", {'fields': ["user_id"]}),
-        ("City", {'fields': ["depart_city","arrival_city"]}),
-        ("Date", {'fields': ["depart_date", "arrival_date"]})
+        ("User", {"fields": ["user_id"]}),
+        ("City", {"fields": ["depart_city","arrival_city"]}),
+        ("Date", {"fields": ["depart_date", "arrival_date"]})
     ]
     list_display = ["user_id", "depart_city", "arrival_city", "depart_date", "arrival_date"]
     list_filter = ["user_id"]
