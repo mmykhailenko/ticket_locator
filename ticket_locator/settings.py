@@ -31,7 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'ticket_locator.hello_world.apps.HelloWorldConfig',
+    'hello_world.apps.HelloWorldConfig',
+    'users_accounts.apps.UsersAccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -130,3 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
+
+#User models
+AUTH_USER_MODEL = "users_accounts.CustomUser"

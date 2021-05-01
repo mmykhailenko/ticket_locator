@@ -1,7 +1,6 @@
 from django.apps import AppConfig
 
 
-class HelloWorldConfig(AppConfig):
-    name = 'hello_world'
+class UsersAccountsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-
+    name = 'users_accounts'
