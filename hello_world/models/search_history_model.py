@@ -10,11 +10,12 @@ class SearchHistory(models.Model):
     - depart date
     - araivl date
     - user_id(related field with User model)"""
-    class Meta:
-        unique_together = (("depart_city", "arrival_city","depart_date","arrival_date","user_id"),)
 
-    id  = models.BigAutoField(primary_key=True)
-    depart_city = models.CharField(max_length= 250, null=False)
+    class Meta:
+        unique_together = (("depart_city", "arrival_city", "depart_date", "arrival_date", "user_id"),)
+
+    id = models.BigAutoField(primary_key=True)
+    depart_city = models.CharField(max_length=250, null=False)
     arrival_city = models.CharField(max_length=250, null=False)
     depart_date = models.DateField(null=False)
     arrival_date = models.DateField(null=False)
@@ -27,10 +28,11 @@ class SearchHistory(models.Model):
 class SearchHistoryAdmin(admin.ModelAdmin):
     fieldsets = [
         ("User", {"fields": ["user_id"]}),
-        ("City", {"fields": ["depart_city","arrival_city"]}),
+        ("City", {"fields": ["depart_city", "arrival_city"]}),
         ("Date", {"fields": ["depart_date", "arrival_date"]})
     ]
     list_display = ["user_id", "depart_city", "arrival_city", "depart_date", "arrival_date"]
     list_filter = ["user_id"]
     search_fields = ["user_id"]
+    ordering = ["user_id"]
     save_on_top = True
