@@ -30,13 +30,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    """Model CustomUser structure
-     - id
-     - email(email)
-     - password(hash)
-     - is_active(bool, True if user available)
-     - is_staff
-     - is_admin """
+    """Model replaces the standard user with a custom one"""
 
     id = models.BigAutoField(primary_key=True, verbose_name="user id")
     username = None
