@@ -16,5 +16,11 @@ python manage.py createsuperuser
 # Run server
 python manage.py runserver
 
-# Open browser by link
-http://127.0.0.1:8000/admin 
+# To go to the admin panel, follow the link in the browser
+http://127.0.0.1:8000/admin
+
+# To work with api use the following links
+http://127.0.0.1:8000/api/users - List of users
+http://127.0.0.1:8000/api/users/<user_id> - User detail view
+http://127.0.0.1:8000/api/history - Search history list
+http://127.0.0.1:8000/api/history/<user_id> - Search history for a specific user
