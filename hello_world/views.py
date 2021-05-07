@@ -16,10 +16,3 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
     queryset = SearchHistory.objects.all()
     serializer_class = SearchHistorySerializer
 
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list', request=request, format=format),
-        'search_histories': reverse('search_history-list', request=request, format=format)
-    })
