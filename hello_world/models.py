@@ -23,11 +23,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class SearchHistory(models.Model):
-	depart_city = models.CharField(max_length=128, blank=False)
-	arrival_city = models.CharField(max_length=128, blank=False)
-	depart_date = models.DateTimeField()
-	arrival_date = models.DateTimeField()
+	departure_city = models.CharField('departure_city', max_length=128, blank=False)
+	arrival_city = models.CharField('arrival_city', max_length=128, blank=False)
+	departure_date = models.DateTimeField('departure_date')
+	arrival_date = models.DateTimeField('arrival_date')
 	user = models.ForeignKey('User', on_delete=models.CASCADE)
 
 	def __str__(self):
-		return f"{self.depart_date} -> {self.arrival_city}"
+		return f"{self.departure_city} -> {self.arrival_city}"
