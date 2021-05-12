@@ -7,6 +7,13 @@ source env/bin/activate  # On Windows use `env\Scripts\activate`
 # Install the required libraries
 pip install -r requirements.txt
 
+# Create file ".env" in folder "env_ticket_locator" with next parameters:
+    DJANGO_SECRET_KEY=your_secret_key
+    SINGAPOREAIR_API_KEY=your_api_key
+    TRANSAVIA_API_KEY=your_api_key
+    TURKISHAIRLINES_API_KEY=your_api_key
+    TURKISHAIRLINES_SECRET_KEY=your_secret_key
+
 # Create your local DB migration
 python manage.py migrate
 
@@ -24,3 +31,4 @@ http://127.0.0.1:8000/api/users - List of users
 http://127.0.0.1:8000/api/users/<user_id> - User detail view
 http://127.0.0.1:8000/api/history - Search history list
 http://127.0.0.1:8000/api/history/<user_id> - Search history for a specific user
+http://127.0.0.1:8000/api/search - Search flights
