@@ -19,3 +19,6 @@ class SearchHistoryView(APIView):
         search_history = SearchHistory.objects.all() if not user else SearchHistory.objects.filter(user=user)
         serializer = SearchHistorySerializer(search_history, many=True)
         return Response(serializer.data)
+
+
+
