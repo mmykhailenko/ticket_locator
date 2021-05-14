@@ -8,6 +8,7 @@ from service_response import ServiceResponse
 class SingaporeAirService(AirCompanyService):
     BASE_URL = 'https://apigw.singaporeair.com/api/v1/commercial/flightavailability/get'
     API_KEY = settings_services.env('SINGAPORE_AIR_API_KEY')
+    EMPTY_JSON = None
 
     '======Request Mapping====='
     REQUEST_VALUES = {
@@ -27,7 +28,10 @@ class SingaporeAirService(AirCompanyService):
     }
     REQUEST_HEADERS = {
         'Content-Type': 'application/json',
-        'apikey': API_KEY
+        'apikey': API_KEY,
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept': '*/*',
+        'Cache-Control': 'no-cache'
     }
 
     '======Response Mapping======'
@@ -50,7 +54,6 @@ class SingaporeAirService(AirCompanyService):
                     try:
                         resp = requests.post(self.BASE_URL, json=self.REQUEST_VALUES, headers=self.REQUEST_HEADERS)
                         resp_json = resp.json()
-                        print(resp_json)
                         if resp_json['status'] != 'SUCCESS':
                             continue
                         resp.raise_for_status()
@@ -58,15 +61,23 @@ class SingaporeAirService(AirCompanyService):
                                                airlines_name=self.RESPONSE_MAP['airlinesName'],
                                                departure_airport=self.RESPONSE_MAP['departure_airport'],
                                                arrival_airport=self.RESPONSE_MAP['arrival_airport'],
-                                               departure_date=self.RESPONSE_MAP['departure_date']
+                                               departure_date=self.RESPONSE_MAP['departure_date'],
                                                )
                     except requests.exceptions.RequestException as e:
                         break
+                    except KeyError:
+                        break
+        return ServiceResponse(resp_json=self.EMPTY_JSON,
+                               airlines_name=self.RESPONSE_MAP['airlinesName'],
+                               departure_airport=departure_city,
+                               arrival_airport=arrival_city,
+                               departure_date=departure_date,
+                               )
 
+t = SingaporeAirService()
 
-# t = SingaporeAirService()
-#
-# r = t.get_flight_info_by_date('Singapore', 'Istanbul', '2021-06-12')
-# print(r.departure_airport)
-# print(r.arrival_airport)
-# print(r.departure_date)
+r = t.get_flight_info_by_date('Singapore', 'Istanbul', '2021-06-10')
+print(r.departure_airport)
+print(r.arrival_airport)
+print(r.departure_date)
+print(r.status)

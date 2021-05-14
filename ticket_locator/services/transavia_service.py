@@ -1,4 +1,5 @@
 import requests
+import json
 import settings_services
 from base_service import AirCompanyService
 from service_response import ServiceResponse
@@ -7,6 +8,8 @@ from service_response import ServiceResponse
 class TransaviaService(AirCompanyService):
     BASE_URL = 'https://api.transavia.com/v1/flightoffers/'
     API_KEY = settings_services.env('TRANSAVIA_API_KEY')
+    EMPTY_JSON=None
+
     '======Request Mapping====='
     REQUEST_VALUES = {
         'origin': 'departure_airport',
@@ -48,11 +51,25 @@ class TransaviaService(AirCompanyService):
                                                )
                     except requests.exceptions.RequestException as e:
                         break
+                    except json.decoder.JSONDecodeError:
+                        break
+        return ServiceResponse(resp_json=self.EMPTY_JSON,
+                               airlines_name=self.RESPONSE_MAP['airlinesName'],
+                               departure_airport=departure_city,
+                               arrival_airport=arrival_city,
+                               departure_date=departure_date,
+                               )
 
-# t = TransaviaService()
-#
-# r = t.get_flight_info_by_date('Amsterdam', 'Tenerife', '20210612')
-#
-# print(r.departure_airport)
-# print(r.arrival_airport)
-# print(r.departure_date)
+t = TransaviaService()
+
+r = t.get_flight_info_by_date('Amsterdam', 'Odessa', '20210612')
+
+print(r.departure_airport)
+print(r.arrival_airport)
+print(r.departure_date)
+r = t.get_flight_info_by_date('Amsterdam', 'Tenerife', '20210612')
+
+print(r.departure_airport)
+print(r.arrival_airport)
+print(r.departure_date)
+print(r.status)
