@@ -25,6 +25,7 @@ class SearchHistoryView(APIView):
         serializer = SearchHistorySerializer(search_history, many=True)
         return Response(serializer.data)
 
+
 class CreatePostForMakingSearchDay(GenericAPIView):
     serializer_class = CreatePostForMakingSearchDaySerializer
 
@@ -45,8 +46,7 @@ class CreatePostForMakingSearchDay(GenericAPIView):
                                                                           departure_date_format["transavia"],
                                                                           cabin_class_format["transavia"],
                                                                           serializer.data["adult_count"],
-                                                                          serializer.data["child_count"]
-                                                                          )
+                                                                          serializer.data["child_count"])
             result_singapor_air = SingaporeService().get_flight_info_by_date(serializer.data["departure_airport"],
                                                                              serializer.data["arrival_airport"],
                                                                              departure_date_format["singapor_air"],

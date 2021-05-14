@@ -27,14 +27,14 @@ class SearchHistorySerializer(serializers.ModelSerializer):
 
 class CreatePostForMakingSearchDaySerializer(serializers.Serializer):
     CHOICES = [("Economy", "Economy"),
-               ("Bisness", "Bisness")]
+               ("Business", "Business")]
     departure_airport = serializers.CharField(max_length=150, required=True,
                                               help_text = "Departure airport name in IATA format")
     arrival_airport = serializers.CharField(max_length=150, required=True,
                                             help_text = "Arrival airport name in IATA format")
     departure_date = serializers.DateField(required=True)
     cabin_class = serializers.ChoiceField(choices=CHOICES)
-    adult_count = serializers.IntegerField(min_value=1, required=True, help_text="Mandatory, min 1 passenger",initial= 1)
+    adult_count = serializers.IntegerField(min_value=1, required=True, help_text="Min 1 adult passenger",initial= 1)
     child_count = serializers.IntegerField(min_value=0, default=0, initial= 0)
     infant_count = serializers.IntegerField(min_value=0, default=0,initial = 0)
 

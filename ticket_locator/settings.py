@@ -14,12 +14,36 @@ from pathlib import Path
 import environ
 
 
-
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
-SINGAPURE_API_KEY = env("SINGAPURE_API_KEY")
+SINGAPORE_API_KEY = env("SINGAPORE_API_KEY")
 TRANSAVIA_API_KEY = env("TRANSAVIA_API_KEY")
+
+#Logging level
+LOGGING = {"version": 1, #take from documentation
+           "disable_existing_loggers": False,
+           "formatters":{"ticket_locator_log_format":{
+               "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+               "style": "{"
+                    },
+           },
+           "handlers":{
+               "logfile":{
+                   "level": "WARNING",
+                   "class": "logging.FileHandler",
+                   "formatter": "ticket_locator_log_format",
+                   "filename": os.path.join(os.path.dirname(os.getcwd()),"ticket_locator/logging/log_services.log"),
+               },
+           },
+           "loggers":{
+               "ticket_locator":{
+                   "handlers":["logfile"],
+                   "level": "WARNING",
+                   "propagate": True,
+               },
+           },
+           }
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
