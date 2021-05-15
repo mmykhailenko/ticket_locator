@@ -6,7 +6,7 @@ from env_vars import env
 from ticket_locator.services.base_service import AirCompanyService
 
 
-class TransaviaService(AirCompanyService):
+class TurkishairlineslService(AirCompanyService):
 	_BASE_URL = 'https://api.turkishairlines.com/test/getAvailability'
 	_API_KEY = env('API_KEY_TURKISHAIRLINES')
 	_API_SECRET_KEY = env('API_SECRET_KEY_TURKISHAIRLINES')
