@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import User, SearchHistory
 from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer
 
@@ -21,4 +20,16 @@ class SearchHistoryView(APIView):
         return Response(serializer.data)
 
 
+class SearchView(APIView):
 
+    def get(self, request, format=None):
+        search = SearchHistory.objects.last()
+        serializer = SearchHistorySerializer(search)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = SearchHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
