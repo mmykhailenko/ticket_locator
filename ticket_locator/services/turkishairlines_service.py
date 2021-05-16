@@ -1,9 +1,8 @@
 import json
 import requests
+from ticket_locator.services.constants import SUCCESS
 from ticket_locator import settings
 from ticket_locator.services.base_service import AirCompanyService
-
-SUCCESS = 'SUCCESS'
 
 
 class TurkishAirlinesService(AirCompanyService):
