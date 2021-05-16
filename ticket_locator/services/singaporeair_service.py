@@ -1,12 +1,14 @@
 import json
 import requests
-from env_ticket_locator import env
+from ticket_locator import settings
 from ticket_locator.services.base_service import AirCompanyService
+
+SUCCESS = 'SUCCESS'
 
 
 class SingaporeAirService(AirCompanyService):
     _BASE_URL = 'https://apigw.singaporeair.com/api/v1/commercial/flightavailability/get'
-    _API_KEY = env('SINGAPOREAIR_API_KEY')
+    _API_KEY = settings.SINGAPOREAIR_API_KEY
 
     _headers = {
         'Content-Type': 'application/json',
@@ -29,16 +31,15 @@ class SingaporeAirService(AirCompanyService):
     }
 
     def _param_prepare(self, **kwargs):
+        date = f'{kwargs["date"][:4]}-{kwargs["date"][4:6]}-{kwargs["date"][6:8]}'
         params = self._params['request']['itineraryDetails'][0]
         params['originAirportCode'] = kwargs['departure_airport']
         params['destinationAirportCode'] = kwargs['arrival_airport']
-        params['departureDate'] = kwargs['date']
+        params['departureDate'] = date
 
     def get_flight_info_by_date(self, departure_airport, arrival_airport, date):
 
         response_service = []
-
-        date = f'{date[:4]}-{date[4:6]}-{date[6:8]}'
 
         self._param_prepare(departure_airport=departure_airport,
                             arrival_airport=arrival_airport,
@@ -49,7 +50,7 @@ class SingaporeAirService(AirCompanyService):
         if response.status_code == 200:
             response_json = response.json()
 
-            if response_json['status'] == 'SUCCESS' and response_json['response'].get('flights'):
+            if response_json['status'] == SUCCESS and response_json['response'].get('flights'):
                 segments = response_json['response']['flights'][0]['segments']
                 for segment in segments:
                     routes = segment['legs']

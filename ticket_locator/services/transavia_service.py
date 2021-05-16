@@ -1,11 +1,11 @@
 import requests
-from env_ticket_locator import env
+from ticket_locator import settings
 from ticket_locator.services.base_service import AirCompanyService
 
 
 class TransaviaService(AirCompanyService):
     _BASE_URL = 'https://api.transavia.com/v1/flightoffers/'
-    _API_KEY = env('TRANSAVIA_API_KEY')
+    _API_KEY = settings.TRANSAVIA_API_KEY
 
     _headers = {
         'Host': 'api.transavia.com',

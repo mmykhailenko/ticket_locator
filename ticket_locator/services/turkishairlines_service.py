@@ -1,13 +1,15 @@
 import json
 import requests
-from env_ticket_locator import env
+from ticket_locator import settings
 from ticket_locator.services.base_service import AirCompanyService
+
+SUCCESS = 'SUCCESS'
 
 
 class TurkishAirlinesService(AirCompanyService):
     _BASE_URL = 'https://api.turkishairlines.com/test/getAvailability'
-    _API_KEY = env('TURKISHAIRLINES_API_KEY')
-    _API_SECRET = env('TURKISHAIRLINES_SECRET_KEY')
+    _API_KEY = settings.TURKISHAIRLINES_API_KEY
+    _API_SECRET = settings.TURKISHAIRLINES_SECRET_KEY
 
     _headers = {
         'Content-Type': 'application/json',
@@ -57,10 +59,23 @@ class TurkishAirlinesService(AirCompanyService):
     }
 
     def _param_prepare(self, **kwargs):
+        date = kwargs['date'][6:8] + {'01': 'JAN',
+                                      '02': 'FEB',
+                                      '03': 'MAR',
+                                      '04': 'APR',
+                                      '05': 'MAY',
+                                      '06': 'JUN',
+                                      '07': 'JUL',
+                                      '08': 'AUG',
+                                      '09': 'SEP',
+                                      '10': 'OCT',
+                                      '11': 'NOV',
+                                      '12': 'DEC',
+                                      }[kwargs['date'][4:6]]
         params = self._params['OriginDestinationInformation'][0]
         params['OriginLocation']['LocationCode'] = kwargs['departure_airport']
         params['DestinationLocation']['LocationCode'] = kwargs['arrival_airport']
-        params['DepartureDateTime']['Date'] = kwargs['date']
+        params['DepartureDateTime']['Date'] = date
 
     @staticmethod
     def _get_flight_data(route_data):
@@ -76,20 +91,6 @@ class TurkishAirlinesService(AirCompanyService):
 
         response_service = []
 
-        date = date[6:8] + {'01': 'JAN',
-                            '02': 'FEB',
-                            '03': 'MAR',
-                            '04': 'APR',
-                            '05': 'MAY',
-                            '06': 'JUN',
-                            '07': 'JUL',
-                            '08': 'AUG',
-                            '09': 'SEP',
-                            '10': 'OCT',
-                            '11': 'NOV',
-                            '12': 'DEC',
-                            }[date[4:6]]
-
         self._param_prepare(departure_airport=departure_airport, arrival_airport=arrival_airport, date=date)
 
         response = requests.post(self._BASE_URL, data=json.dumps(self._params), headers=self._headers)
@@ -97,7 +98,7 @@ class TurkishAirlinesService(AirCompanyService):
         if response.status_code == 200:
             response_json = response.json()
 
-            if response_json['status'] == 'SUCCESS':
+            if response_json['status'] == SUCCESS:
                 segments = (response_json['data']
                                          ['availabilityOTAResponse']
                                          ['createOTAAirRoute']

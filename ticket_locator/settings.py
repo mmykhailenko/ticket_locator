@@ -1,5 +1,13 @@
 from pathlib import Path
-from env_ticket_locator import env
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+DJANGO_SECRET_KEY = env('DJANGO_SECRET_KEY')
+SINGAPOREAIR_API_KEY = env('SINGAPOREAIR_API_KEY')
+TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
+TURKISHAIRLINES_API_KEY = env('TURKISHAIRLINES_API_KEY')
+TURKISHAIRLINES_SECRET_KEY = env('TURKISHAIRLINES_SECRET_KEY')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY')
+SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
