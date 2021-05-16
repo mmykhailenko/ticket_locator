@@ -32,11 +32,8 @@ class FlightSearchView(APIView):
 		departure = request.data['departure_airport']
 		destination = request.data['destination_airport']
 		depart_date = request.data['departure_date']
-		print(depart_date)
-		print('*'*10)
 
 		if departure and destination and depart_date:
-			print('do response')
 			for company in [SingaporairService, TransaviaService, TurkishairlineslService]:
 				info_fly = company().get_flight_info_by_date(departure, destination, depart_date)
 				result.append(info_fly)
