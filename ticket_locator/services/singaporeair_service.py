@@ -55,6 +55,3 @@ class SingaporeairService(AirCompanyService):
                 return ServiceResponse(response=resp_json['message'])
         except ConnectionError:
             print('Connection Error')
-
-a = SingaporeairService()
-a.get_flight_info_by_date()
