@@ -49,7 +49,7 @@ class SingaporeAirService(AirCompanyService):
         if response.status_code == 200:
             response_json = response.json()
 
-            if response_json['status'] == 'SUCCESS':
+            if response_json['status'] == 'SUCCESS' and response_json['response'].get('flights'):
                 segments = response_json['response']['flights'][0]['segments']
                 for segment in segments:
                     routes = segment['legs']
