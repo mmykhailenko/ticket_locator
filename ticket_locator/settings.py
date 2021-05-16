@@ -11,8 +11,16 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from env_vars import env
+import environ
 
+env = environ.Env()
+environ.Env.read_env()
+
+DJ_KEY = env('DJ_KEY')
+API_KEY_SINGAPOREAIR = env('API_KEY_SINGAPOREAIR')
+API_KEY_TRANSAVIA = env('API_KEY_TRANSAVIA')
+API_KEY_TURKISHAIRLINES = env('API_KEY_TURKISHAIRLINES')
+API_SECRET_KEY_TURKISHAIRLINES = env('API_SECRET_KEY_TURKISHAIRLINES')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJ-KEY')
+SECRET_KEY = DJ_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

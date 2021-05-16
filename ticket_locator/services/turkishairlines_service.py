@@ -1,15 +1,15 @@
+import datetime
 import json
-import pprint
 
 import requests
-from env_vars import env
+from ticket_locator.settings import API_KEY_TURKISHAIRLINES, API_SECRET_KEY_TURKISHAIRLINES
 from ticket_locator.services.base_service import AirCompanyService
 
 
 class TurkishairlineslService(AirCompanyService):
 	_BASE_URL = 'https://api.turkishairlines.com/test/getAvailability'
-	_API_KEY = env('API_KEY_TURKISHAIRLINES')
-	_API_SECRET_KEY = env('API_SECRET_KEY_TURKISHAIRLINES')
+	_API_KEY = API_KEY_TURKISHAIRLINES
+	_API_SECRET_KEY = API_SECRET_KEY_TURKISHAIRLINES
 
 	_HTTP_HEADERS = {
 		'Content-Type': 'application/json',
@@ -61,13 +61,32 @@ class TurkishairlineslService(AirCompanyService):
 		part_of_body['DepartureDateTime']['Date'] = departure_date
 
 	def get_flight_info_by_date(self, origin_airport_code: str, destination_airport_code: str, departure_date: str):
+		result_response = []
+		departure_date = datetime.datetime.strptime(departure_date, '%Y-%m-%d').__format__('%d%b').upper()
 		self._fill_fly_details(origin_airport_code, destination_airport_code, departure_date)
 		response = requests.post(url=self._BASE_URL, data=json.dumps(self._REQUEST_BODY), headers=self._HTTP_HEADERS)
-
 		if response.status_code == 200:
-			return response.json()
+			response_json = response.json()
+			flight_offer = (response_json['data']
+			['availabilityOTAResponse']
+			['createOTAAirRoute']
+			['OTA_AirAvailRS']
+			['OriginDestinationInformation']
+			['OriginDestinationOptions']
+			['OriginDestinationOption']['FlightSegment'])
+			for offer in flight_offer:
+				outer_response = {
+					'Aircompany': offer["OperatingAirline"]['CompanyShortName'],
+					'Departure date': offer["DepartureDateTime"],
+					'Departure airport': offer["DepartureAirport"]['LocationCode'],
+					'Arrival date': offer["ArrivalDateTime"],
+					'Arrival airport': offer["ArrivalAirport"]['LocationCode'],
+					'Flight number': offer["FlightNumber"]
+				}
+				result_response.append(outer_response)
+			return result_response
 		else:
-			raise requests.exceptions.RequestException
+			return result_response
 
 	def get_flight_info_by_period(self, *args, **kwargs):
 		pass
