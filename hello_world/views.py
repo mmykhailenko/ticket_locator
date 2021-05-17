@@ -2,7 +2,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User, SearchHistory
-from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer
+from ticket_locator.services.singaporeair_service import SingaporeAirService
+from ticket_locator.services.transavia_service import TransaviaService
+from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
+from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, FlightSearchSerializer
 
 
 class UserView(APIView):
@@ -19,3 +22,24 @@ class SearchHistoryView(APIView):
         search_history = SearchHistory.objects.all() if not user else SearchHistory.objects.filter(user=user)
         serializer = SearchHistorySerializer(search_history, many=True)
         return Response(serializer.data)
+
+
+class FlightSearchView(APIView):
+    serializer_class = FlightSearchSerializer
+
+    def post(self, request):
+        result = []
+        if request.data['departure_airport'] and request.data['arrival_airport'] and request.data['departure_date']:
+            for air_company in [SingaporeAirService, TransaviaService, TurkishAirlinesService]:
+                flight_info = air_company().get_flight_info_by_date(
+                    request.data['departure_airport'],
+                    request.data['arrival_airport'],
+                    ''.join(request.data['departure_date'].split('-')))
+                if request.data.get('direct_flight', None):
+                    for flight in flight_info:
+                        if len(flight) < 2:
+                            result += flight
+                else:
+                    result += flight_info
+            return Response(result)
+        return Response({'Error': 'Please fill all fields.'})
