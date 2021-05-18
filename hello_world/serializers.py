@@ -23,3 +23,21 @@ class SearchHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchHistory
         fields = ('id', 'user', 'user_id', 'departure_city', 'arrival_city', 'departure_date', 'arrival_date',)
+
+
+class ArticleSerializer(serializers.Serializer):
+    departure_city = serializers.CharField(max_length=128)
+    arrival_city = serializers.CharField(max_length=128)
+    departure_date = serializers.DateTimeField()
+
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
+
+
+class SearchSerializer(serializers.Serializer):
+    departure_airport = serializers.CharField(max_length=3, help_text="IATA format")
+    arrival_airport = serializers.CharField(max_length=3, help_text="IATA format")
+    departure_date = serializers.DateField()
+
+    def create(self, validated_data):
+        return validated_data

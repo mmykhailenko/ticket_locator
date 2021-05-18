@@ -1,6 +1,7 @@
+import json
+
 from ticket_locator.services.base_service import AirCompanyService
 import requests
-from ticket_locator.services.service_response import ServiceResponse
 from ticket_locator import env
 
 
@@ -32,21 +33,28 @@ class TransaviaService(AirCompanyService):
         self.RESPONSE_MAP['arrival_city'] = arrival_airport
         self.RESPONSE_MAP['date'] = date
         self.RESPONSE_MAP['price'] = resp_json['flightOffer'][0]['pricingInfoSum']['totalPriceOnePassenger']
+        return self.RESPONSE_MAP
 
-    def get_flight_info_by_date(self, departure_airport='LCA', arrival_airport='AMS', date='20210516'):
+    def get_flight_info_by_date(self, departure_airport='LCA', arrival_airport='AMS', date='2021-05-23'):
         date = ''.join(date.split('-'))
         self._create_params(departure_airport, arrival_airport, date)
         try:
             resp = requests.get(url=self.BASE_URL, headers=self.API_KEY, params=self.PARAMS)
             resp_json = resp.json()
             if resp.status_code == 200:
-                self._create_response_map(resp_json, departure_airport, arrival_airport, date)
-                return ServiceResponse(response=self.RESPONSE_MAP)
+                return self._create_response_map(resp_json, departure_airport, arrival_airport, date)
             else:
-                return ServiceResponse(response=resp_json['errorMessage'])
+                return resp_json['errorMessage']
         except ConnectionError:
             print('Connection Error')
+        except json.decoder.JSONDecodeError:
+            return {'Message': 'No flights available'}
 
+
+if __name__ == "__main__":
+    a = TransaviaService()
+    print(a)
+    print(a.get_flight_info_by_date())
 
 
 

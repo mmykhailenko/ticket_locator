@@ -1,6 +1,5 @@
 from ticket_locator.services.base_service import AirCompanyService
 import requests
-from ticket_locator.services.service_response import ServiceResponse
 from ticket_locator import env
 
 
@@ -21,8 +20,6 @@ class SingaporeairService(AirCompanyService):
             ],
             "cabinClass":"Y",
             "adultCount":1,
-            "childCount":1,
-            "infantCount":1
         }
     }
     RESPONSE_MAP = {
@@ -38,20 +35,30 @@ class SingaporeairService(AirCompanyService):
         self.PARAMS['request']['itineraryDetails'][0]['departureDate'] = date
 
     def _create_response_map(self, resp_json, departure_airport, arrival_airport, date):
-        self.RESPONSE_MAP['departure_city'] = departure_airport
-        self.RESPONSE_MAP['arrival_city'] = arrival_airport
-        self.RESPONSE_MAP['date'] = date
-        self.RESPONSE_MAP['price'] = resp_json['response']['recommendations'][0]['fareSummary']['fareDetailsPerAdult']['totalAmount']
+        result = []
+        for item in range(len(resp_json['response']['recommendations'])):
+            self.RESPONSE_MAP['departure_city'] = departure_airport
+            self.RESPONSE_MAP['arrival_city'] = arrival_airport
+            self.RESPONSE_MAP['date'] = date
+            self.RESPONSE_MAP['price'] = resp_json['response']['recommendations'][item]['fareSummary']['fareDetailsPerAdult']['totalAmount']
+            result.append(self.RESPONSE_MAP)
+            self.RESPONSE_MAP = {}
+        return result
 
-    def get_flight_info_by_date(self, departure_airport='SIN', arrival_airport='LHR', date='2021-05-16'):
+
+    def get_flight_info_by_date(self, departure_airport='SIN', arrival_airport='LHR', date='2021-05-26'):
         self._create_params(departure_airport, arrival_airport, date)
         try:
             resp = requests.post(url=self.BASE_URL, headers=self.API_KEY, json=self.PARAMS)
             resp_json = resp.json()
             if resp_json['code'] == '200':
-                self._create_response_map(resp_json, departure_airport, arrival_airport, date)
-                return ServiceResponse(response=self.RESPONSE_MAP)
+                return self._create_response_map(resp_json, departure_airport, arrival_airport, date)
             else:
-                return ServiceResponse(response=resp_json['message'])
+                return resp_json['message']
         except ConnectionError:
             print('Connection Error')
+
+
+if __name__ == "__main__":
+    a = SingaporeairService()
+    print(a.get_flight_info_by_date())

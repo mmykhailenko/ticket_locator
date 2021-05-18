@@ -9,4 +9,5 @@ urlpatterns = [
     path("history/", views.SearchHistoryView.as_view()),
     path("history/<int:user>", views.SearchHistoryView.as_view()),
     path("search/", views.SearchView.as_view()),
+
 ]

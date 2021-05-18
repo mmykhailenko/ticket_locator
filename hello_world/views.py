@@ -1,8 +1,5 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
 from .models import User, SearchHistory
-from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer
+from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, SearchSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -26,9 +23,12 @@ class SearchHistoryView(APIView):
 
 
 class SearchView(APIView):
+    serializer_class = SearchSerializer
 
-    def get(self, request, format=None):
-        departure_city = input('departure_city: ')
-        arrival_city = input('arrival_city: ')
-        date = input('date(YYYY-MM-DD): ')
-        return Response(service_request.get_request(departure_city, arrival_city, date))
+    def post(self, request):
+        departure_city = request.data['departure_airport']
+        arrival_city = request.data['arrival_airport']
+        date = request.data['departure_date']
+        result = service_request.get_request(departure_city, arrival_city, date)
+        return Response(result)
+
