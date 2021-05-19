@@ -1,0 +1,92 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: .
+    restart: unless-stopped
+    image: ticket_locator_web
+    ports:
+      - 127.0.0.1:8000:8000
+    networks:
+      - django_network
+    volumes:
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - redis
+      - pgadmin
+      - dbpsql
+
+  celery:
+    image: ticket_locator_web
+    container_name: celeryTL
+    restart: always
+    links:
+      - redis
+    entrypoint: celery -A ticket_locator worker -l INFO
+    volumes:
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+      - pgadmin
+      - dbpsql
+
+  flower:
+    image: mher/flower:latest
+    container_name: flowerTL
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    networks:
+      - django_network
+    command:
+      - celery -A ticket_locator flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery
+
+  dbpsql:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - psql.env
+    restart: always
+    hostname: dbpsql
+    networks:
+      - django_network
+    ports:
+      - 9000:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg4_l
+    restart: unless-stopped
+    env_file:
+      - pg4.env
+    ports:
+      - 5500:80
+    depends_on:
+      - dbpsql
+    networks:
+      - django_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - django_network
+    ports:
+      - 6379:6379
+
+networks:
+  django_network:
+volumes:
+  dbdata:
