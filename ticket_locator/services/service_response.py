@@ -14,12 +14,8 @@ class ServiceResponse:
         self.status = 'SUCCESS' if resp_json else 'FAILURE'
 
     def transform_json(self):
-        return json.dumps({
-            'airlinesName': self.airlines_name,
-            'departureAirport': self.departure_airport,
-            'arrivalAirport': self.arrival_airport,
-            'departureDate': self.departure_date
-        })
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
     @staticmethod
     def apply_mapping(data, list_of_keys):

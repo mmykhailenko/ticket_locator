@@ -1,8 +1,8 @@
 import requests
 import json
-import settings_services
-from base_service import AirCompanyService
-from service_response import ServiceResponse
+from . import settings_services
+from .base_service import AirCompanyService
+from .service_response import ServiceResponse
 
 
 class TransaviaService(AirCompanyService):
@@ -18,7 +18,10 @@ class TransaviaService(AirCompanyService):
     }
     REQUEST_HEADERS = {
         'Content-Type': 'application/json',
-        'apikey': API_KEY
+        'apikey': API_KEY,
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept': '*/*',
+        'Cache-Control': 'no-cache'
     }
     '======Response Mapping======'
     RESPONSE_MAP = {
@@ -48,28 +51,28 @@ class TransaviaService(AirCompanyService):
                                                departure_airport=self.RESPONSE_MAP['departure_airport'],
                                                arrival_airport=self.RESPONSE_MAP['arrival_airport'],
                                                departure_date=self.RESPONSE_MAP['departure_date']
-                                               )
+                                               ).transform_json()
                     except requests.exceptions.RequestException as e:
-                        break
+                        continue
                     except json.decoder.JSONDecodeError:
-                        break
+                        continue
         return ServiceResponse(resp_json=self.EMPTY_JSON,
                                airlines_name=self.RESPONSE_MAP['airlinesName'],
                                departure_airport=departure_city,
                                arrival_airport=arrival_city,
                                departure_date=departure_date,
-                               )
+                               ).transform_json()
 
-t = TransaviaService()
-
-r = t.get_flight_info_by_date('Amsterdam', 'Odessa', '20210612')
-
-print(r.departure_airport)
-print(r.arrival_airport)
-print(r.departure_date)
-r = t.get_flight_info_by_date('Amsterdam', 'Tenerife', '20210612')
-
-print(r.departure_airport)
-print(r.arrival_airport)
-print(r.departure_date)
-print(r.status)
+# t = TransaviaService()
+#
+# r = t.get_flight_info_by_date('Amsterdam', 'Odessa', '20210612')
+#
+# print(r.departure_airport)
+# print(r.arrival_airport)
+# print(r.departure_date)
+# r = t.get_flight_info_by_date('Amsterdam', 'Tenerife', '20210612')
+#
+# print(r.departure_airport)
+# print(r.arrival_airport)
+# print(r.departure_date)
+# print(r.status)

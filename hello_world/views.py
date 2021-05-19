@@ -1,7 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from .models import User, SearchHistory
-from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer
+from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, SearchSerializer
+from ticket_locator.services.transavia_service import TransaviaService
+from ticket_locator.services.singapore_air_service import SingaporeAirService
 
 
 class UserView(APIView):
@@ -20,16 +23,23 @@ class SearchHistoryView(APIView):
         return Response(serializer.data)
 
 
-class SearchView(APIView):
+class SearchView(GenericAPIView):
+    serializer_class = SearchSerializer
+    queryset = SearchHistory.objects.all()
 
-    def get(self, request, format=None):
-        search = SearchHistory.objects.last()
-        serializer = SearchHistorySerializer(search)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = SearchHistorySerializer(data=request.data)
+    def post(self, request: object):
+        serializer = SearchSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            result = []
+            flight_info_SingaporeAir = SingaporeAirService().get_flight_info_by_date(
+                request.data['departure_city'],
+                request.data['arrival_city'],
+                request.data['departure_date'])
+            result.append(flight_info_SingaporeAir)
+            flight_info_Transavia = TransaviaService().get_flight_info_by_date(
+                request.data['departure_city'],
+                request.data['arrival_city'],
+                ''.join(request.data['departure_date'].split('-')))
+            result.append(flight_info_Transavia)
+            return Response(result)
+        return Response({'Error': 'Please fill all the fields in the form.'})

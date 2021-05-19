@@ -1,8 +1,7 @@
 import requests
-import json
-from base_service import AirCompanyService
-import settings_services
-from service_response import ServiceResponse
+from .base_service import AirCompanyService
+from . import settings_services
+from .service_response import ServiceResponse
 
 
 class SingaporeAirService(AirCompanyService):
@@ -62,22 +61,22 @@ class SingaporeAirService(AirCompanyService):
                                                departure_airport=self.RESPONSE_MAP['departure_airport'],
                                                arrival_airport=self.RESPONSE_MAP['arrival_airport'],
                                                departure_date=self.RESPONSE_MAP['departure_date'],
-                                               )
+                                               ).transform_json()
                     except requests.exceptions.RequestException as e:
-                        break
+                        continue
                     except KeyError:
-                        break
+                        continue
         return ServiceResponse(resp_json=self.EMPTY_JSON,
                                airlines_name=self.RESPONSE_MAP['airlinesName'],
                                departure_airport=departure_city,
                                arrival_airport=arrival_city,
                                departure_date=departure_date,
-                               )
+                               ).transform_json()
 
-t = SingaporeAirService()
-
-r = t.get_flight_info_by_date('Singapore', 'Istanbul', '2021-06-10')
-print(r.departure_airport)
-print(r.arrival_airport)
-print(r.departure_date)
-print(r.status)
+# t = SingaporeAirService()
+#
+# r = t.get_flight_info_by_date('Singapore', 'Istanbul', '2021-06-10')
+# print(r.departure_airport)
+# print(r.arrival_airport)
+# print(r.departure_date)
+# print(r.status)

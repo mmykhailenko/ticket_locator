@@ -1,14 +1,16 @@
 import json
+import os
 
 
 class AirCompanyService:
     BASE_URL = 'https'
-    AIRPORT_LIST_FILE = 'data/airport_list.json'
+    AIRPORT_LIST_FILE = r'\ticket_locator\services\data\airport_list.json'
+    PATH_TO_DATAFILE = os.getcwd() + AIRPORT_LIST_FILE
     # API_KEY = settings.API_KEY
 
     def find_airport_code(self, city):
         city = city.lower().capitalize()
-        with open(AirCompanyService.AIRPORT_LIST_FILE, 'r') as json_file:
+        with open(self.PATH_TO_DATAFILE, 'r') as json_file:
             data = json_file.read()
             airport_list = json.loads(data)
             return_list = []
