@@ -62,7 +62,7 @@ services:
     ports:
       - 9000:5432
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - ./dbdata:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -88,5 +88,6 @@ services:
 
 networks:
   django_network:
-volumes:
-  dbdata:
+
+
+

@@ -6,6 +6,6 @@ from hello_world import urls, views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(urls)),
-    path("", views.SearchAirRoute.as_view(), name="search"),
+    path("", views.SearchAirRoute.as_view(), name="index"),
 ]
 urlpatterns += swagger

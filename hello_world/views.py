@@ -66,12 +66,10 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
         return render(request=request, template_name="hello_world/index.html", context={"form": form})
 
     def post(self, request):
-        print(request.POST)
         form = SearchAirRouteForm(request.POST)
         if form.is_valid():
             form.cleaned_data["departure_date"] = (form.cleaned_data["departure_date"]).strftime('%Y-%m-%d')
             request.data = form.cleaned_data
             result = FlightSearchView().post(request)
-            print(result.data)
             return render(request, "hello_world/search_results.html", {"result": result.data,
                                                                        "form": form})
