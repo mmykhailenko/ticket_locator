@@ -32,3 +32,6 @@ http://127.0.0.1:8000/api/users/<user_id> - User detail view
 http://127.0.0.1:8000/api/history - Search history list
 http://127.0.0.1:8000/api/history/<user_id> - Search history for a specific user
 http://127.0.0.1:8000/api/search - Search flights
+
+# Swagger link
+http://127.0.0.1:8000/swagger
