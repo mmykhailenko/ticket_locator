@@ -1,78 +1,56 @@
 import requests
-import json
-from . import settings_services
-from .base_service import AirCompanyService
-from .service_response import ServiceResponse
+from ticket_locator import settings
+from ticket_locator.services.base_service import AirCompanyService
 
 
 class TransaviaService(AirCompanyService):
-    BASE_URL = 'https://api.transavia.com/v1/flightoffers/'
-    API_KEY = settings_services.env('TRANSAVIA_API_KEY')
-    EMPTY_JSON=None
+    _BASE_URL = 'https://api.transavia.com/v1/flightoffers/'
+    _API_KEY = settings.TRANSAVIA_API_KEY
 
-    '======Request Mapping====='
-    REQUEST_VALUES = {
-        'origin': 'departure_airport',
-        'destination': 'arrival_airport',
-        'originDepartureDate': 'departure_date',
-    }
-    REQUEST_HEADERS = {
-        'Content-Type': 'application/json',
-        'apikey': API_KEY,
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept': '*/*',
-        'Cache-Control': 'no-cache'
-    }
-    '======Response Mapping======'
-    RESPONSE_MAP = {
-        'airlinesName': 'Transavia',
-        'departure_airport': ['flightOffer', 0, 'outboundFlight', 'departureAirport', 'locationCode'],
-        'arrival_airport': ['flightOffer', 0, 'outboundFlight', 'arrivalAirport', 'locationCode'],
-        'departure_date': ['flightOffer', 0, 'outboundFlight', 'departureDateTime']
+    _headers = {
+        'Host': 'api.transavia.com',
+        'apikey': _API_KEY,
     }
 
-    def get_flight_info_by_date(self, departure_city, arrival_city, departure_date):
-        departure_airports = self.find_airport_code(departure_city)
-        arrival_airports = self.find_airport_code(arrival_city)
-        if departure_airports and arrival_airports:
-            for departure_airport in departure_airports:
-                for arrival_airport in arrival_airports:
-                    self.REQUEST_VALUES['origin'] = departure_airport
-                    self.REQUEST_VALUES['destination'] = arrival_airport
-                    self.REQUEST_VALUES['originDepartureDate'] = departure_date
-                    try:
-                        resp = requests.get(self.BASE_URL,
-                                            params=self.REQUEST_VALUES,
-                                            headers=self.REQUEST_HEADERS)
-                        resp_json = resp.json()
-                        resp.raise_for_status()
-                        return ServiceResponse(resp_json=resp_json,
-                                               airlines_name=self.RESPONSE_MAP['airlinesName'],
-                                               departure_airport=self.RESPONSE_MAP['departure_airport'],
-                                               arrival_airport=self.RESPONSE_MAP['arrival_airport'],
-                                               departure_date=self.RESPONSE_MAP['departure_date']
-                                               ).transform_json()
-                    except requests.exceptions.RequestException as e:
-                        continue
-                    except json.decoder.JSONDecodeError:
-                        continue
-        return ServiceResponse(resp_json=self.EMPTY_JSON,
-                               airlines_name=self.RESPONSE_MAP['airlinesName'],
-                               departure_airport=departure_city,
-                               arrival_airport=arrival_city,
-                               departure_date=departure_date,
-                               ).transform_json()
+    _params = {
+        'origin': '',
+        'destination': '',
+        'originDepartureDate': ''
+    }
 
-# t = TransaviaService()
-#
-# r = t.get_flight_info_by_date('Amsterdam', 'Odessa', '20210612')
-#
-# print(r.departure_airport)
-# print(r.arrival_airport)
-# print(r.departure_date)
-# r = t.get_flight_info_by_date('Amsterdam', 'Tenerife', '20210612')
-#
-# print(r.departure_airport)
-# print(r.arrival_airport)
-# print(r.departure_date)
-# print(r.status)
+    def _param_prepare(self, **kwargs):
+        params = self._params
+        params['origin'] = kwargs['departure_airport']
+        params['destination'] = kwargs['arrival_airport']
+        params['originDepartureDate'] = kwargs['date']
+
+    def get_flight_info_by_date(self, departure_airport, arrival_airport, date):
+
+        response_service = []
+
+        self._param_prepare(departure_airport=departure_airport,
+                            arrival_airport=arrival_airport,
+                            date=date)
+
+        response = requests.get(self._BASE_URL, params=self._params, headers=self._headers)
+
+        if response.status_code == 200:
+            response_json = response.json()
+
+            flights = response_json['flightOffer']
+            for flight in flights:
+                flight_info = flight['outboundFlight']
+                response_map = {'Airline': flight_info['marketingAirline']['companyShortName'],
+                                'FlightNumber': str(flight_info['flightNumber']),
+                                'DepartureAirport': flight_info['departureAirport']['locationCode'],
+                                'ArrivalAirport': flight_info['arrivalAirport']['locationCode'],
+                                'DepartureTime': flight_info['departureDateTime'],
+                                'ArrivalTime': flight_info['arrivalDateTime']}
+                response_service.append(response_map)
+
+            return [response_service]
+
+        return []
+
+    def get_flight_info_by_period(self, departure_city, arrival_city, start_date, end_date):
+        pass

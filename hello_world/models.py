@@ -25,7 +25,7 @@ class SearchHistory(models.Model):
     departure_city = models.CharField('Departure city', max_length=128)
     arrival_city = models.CharField('Arrival city', max_length=128)
     departure_date = models.DateTimeField('Departure date')
-    arrival_date = models.DateTimeField('Arrival date', blank=True)
+    arrival_date = models.DateTimeField('Arrival date')
     user = models.ForeignKey('User', on_delete=models.CASCADE)
 
     class Meta:

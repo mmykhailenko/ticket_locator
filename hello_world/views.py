@@ -2,9 +2,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from .models import User, SearchHistory
-from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, SearchSerializer
+from ticket_locator.services.singaporeair_service import SingaporeAirService
 from ticket_locator.services.transavia_service import TransaviaService
-from ticket_locator.services.singapore_air_service import SingaporeAirService
+from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
+from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, FlightSearchSerializer
+from django.shortcuts import render
+from .forms import SearchForm
 
 
 class UserView(APIView):
@@ -23,23 +26,45 @@ class SearchHistoryView(APIView):
         return Response(serializer.data)
 
 
-class SearchView(GenericAPIView):
-    serializer_class = SearchSerializer
-    queryset = SearchHistory.objects.all()
+class FlightSearchView(GenericAPIView):
+    serializer_class = FlightSearchSerializer
 
-    def post(self, request: object):
-        serializer = SearchSerializer(data=request.data)
-        if serializer.is_valid():
-            result = []
-            flight_info_SingaporeAir = SingaporeAirService().get_flight_info_by_date(
-                request.data['departure_city'],
-                request.data['arrival_city'],
-                request.data['departure_date'])
-            result.append(flight_info_SingaporeAir)
-            flight_info_Transavia = TransaviaService().get_flight_info_by_date(
-                request.data['departure_city'],
-                request.data['arrival_city'],
-                ''.join(request.data['departure_date'].split('-')))
-            result.append(flight_info_Transavia)
+    def post(self, request):
+        result = []
+        if request.data['departure_airport'] and request.data['arrival_airport'] and request.data['departure_date']:
+            for air_company in [SingaporeAirService, TransaviaService, TurkishAirlinesService]:
+                flight_info = air_company().get_flight_info_by_date(
+                    request.data['departure_airport'],
+                    request.data['arrival_airport'],
+                    ''.join(request.data['departure_date'].split('-')))
+                if request.data.get('direct_flight', None):
+                    for flight in flight_info:
+                        if len(flight) < 2:
+                            result += flight
+                else:
+                    result += flight_info
             return Response(result)
-        return Response({'Error': 'Please fill all the fields in the form.'})
+        return Response({'Error': 'Please fill all fields.'})
+
+
+
+
+def index(request, **kwargs):
+    submitbutton = request.POST.get("submit")
+
+    departure_airport = ''
+    arrival_airport = ''
+    departure_date = ''
+    direct_flight = ''
+
+    form = SearchForm(request.POST or None)
+    if form.is_valid():
+        departure_airport = form.cleaned_data.get('departure_airport')
+        arrival_airport = form.cleaned_data.get('arrival_airport')
+        departure_date = form.cleaned_data.get('departure_date')
+        direct_flight = form.cleaned_data.get('direct_flight')
+
+    context = {'form': form, 'departure_airport': departure_airport, 'arrival_airport': arrival_airport,
+               'departure_date': departure_date, 'direct_flight': direct_flight}
+
+    return render(request, 'index.html.j2', context)

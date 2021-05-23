@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>Following flights were found:</p>
+{% for flight in flights %}
+    <p>Departure Airport: {{ flight['departure_airport']}}</p>
+    <p>Arrival Airport: {{ flight['arrival_airport']}}</p>
+    <p>Departure date: {{ flight['departure_date']}}</p>
+{% endfor %}
+{% endblock %}
+
+<label for="direct_flight">Direct flight</label>
+      <input type="checkbox" id="direct_flight" name="direct_flight" value="{{ direct_flight }}><br><br>
