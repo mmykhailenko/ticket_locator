@@ -1,0 +1,17 @@
+{% extends "hello_world/base_layout.html" %}
+
+{%  block content %}
+    {% for flights in result %}
+        {% for fligth in flights %}
+            <div style="margin: 0; padding: 0;">
+                <p><strong>Airline - </strong>{{fligth.Airline}}</p>
+                <p><strong>Fligth number - </strong>{{fligth.FlightNumber}}</p>
+                <p><strong>Departure time - </strong>{{fligth.DepartureAirport}}</p>
+                <p><strong>Arrival airport - </strong>{{fligth.ArrivalAirport}}</p>
+                <p><strong>Departure time - </strong>{{fligth.DepartureTime}}</p>
+                <p><strong>Arrival time - </strong>{{fligth.ArrivalTime}}</p>
+            </div>
+            <br>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
