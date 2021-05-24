@@ -1,3 +1,7 @@
+from rest_framework import generics
+from rest_framework.generics import GenericAPIView
+from rest_framework.renderers import TemplateHTMLRenderer
+from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -24,10 +28,19 @@ class SearchHistoryView(APIView):
         return Response(serializer.data)
 
 
-class FlightSearchView(APIView):
+class FlightSearchView(GenericAPIView):
     serializer_class = FlightSearchSerializer
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'hello_world/response.html'
+
+    def get(self, request):
+        serializer = FlightSearchSerializer
+        return Response({'serializer': serializer})
 
     def post(self, request):
+        serializer_class = FlightSearchSerializer(data=request.data)
+        if not serializer_class.is_valid():
+            pass
         result = []
         if request.data['departure_airport'] and request.data['arrival_airport'] and request.data['departure_date']:
             for air_company in [SingaporeAirService, TransaviaService, TurkishAirlinesService]:
@@ -41,5 +54,5 @@ class FlightSearchView(APIView):
                             result += flight
                 else:
                     result += flight_info
-            return Response(result)
-        return Response({'Error': 'Please fill all fields.'})
+            return Response({'result': result, 'serializer': serializer_class}, template_name='hello_world/response.html')
+        return Response({'serializer': serializer_class})

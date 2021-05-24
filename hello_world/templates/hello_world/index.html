@@ -1,0 +1,29 @@
+{% load rest_framework %}
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style>
+       hr {
+        color: darkgrey;
+        height: 1.5px;
+        }
+       .page-header {
+        margin-top: 0;
+        padding: 20px 20px 20px 40px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="page-header">
+        <h1>Search</h1>
+    </div>
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+            {% block response %}
+            {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>

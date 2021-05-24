@@ -1,0 +1,27 @@
+{% extends 'hello_world/index.html' %}
+{% load rest_framework %}
+
+{% block response %}
+    {%if not result %}
+        {% block form %}
+        <form action="{% url 'new_search' %}" method="POST">
+            {% csrf_token %}
+            {% render_form serializer template_pack='rest_framework/vertical'%}
+        <input type="submit" value="Search">
+        </form>
+        {% endblock form %}
+    {%else%}
+        {% for flight_info in result %}
+        {% for flight in flight_info %}
+            <div>
+                <p>Airline: {{ flight.Airline }}</p>
+                <p>Flight number: {{ flight.FlightNumber }}</p>
+                <p>Departure airport: {{ flight.DepartureAirport }}</p>
+                <p>Arrival airport: {{ flight.ArrivalAirport }}</p>
+                <p>Departure time: {{ flight.DepartureTime }}</p>
+                <p>Arrival time: {{ flight.ArrivalTime }}</p>
+            </div>
+        {% endfor flight %}<hr>
+        {% endfor flight_info%}
+    {%endif%}
+{% endblock response%}
