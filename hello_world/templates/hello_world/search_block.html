@@ -1,0 +1,17 @@
+{% extends 'hello_world/index.html' %}
+{% block content %}
+<p>Following flights were found:</p>
+    {%if result %}
+        {%for flight in result %}
+            {% for block in flight %}
+            <p>Flight number: {{ block.FlightNumber }}</p>
+            <p>Departure Airport: {{ block.DepartureAirport }}</p>
+            <p>Arrival Airport: {{ block.ArrivalAirport }}</p>
+            <p>Flight number: {{ block.FlightNumber }}</p><br><br>
+            {% endfor %}
+        {% endfor %}
+    {%endif%}
+    {%if form %}
+        <p>Nothing was found</p>
+    {%endif%}
+{% endblock %}

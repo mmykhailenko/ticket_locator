@@ -49,15 +49,15 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'ticket_locator.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [os.path.join(BASE_DIR, 'templates/jinja2')],
-        'APP_DIRS': True,
-        'OPTIONS': {'environment': 'ticket_locator.jinja2.Environment'}
-    },
+    # {
+    #     'BACKEND': 'django.template.backends.hello_world.Jinja2',
+    #     'DIRS': [os.path.join(BASE_DIR, 'templates/hello_world')],
+    #     'APP_DIRS': True,
+    #     'OPTIONS': {'environment': 'ticket_locator.hello_world.Environment'}
+    # },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [], #os.path.join(BASE_DIR, 'templates/hello_world')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

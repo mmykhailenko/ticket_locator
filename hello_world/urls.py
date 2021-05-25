@@ -20,5 +20,5 @@ urlpatterns = [
         description="API for searching the flights.",
         version="1.0.0"
     ), name='openapi-schema'),
-    path('jinja_template/', views.index, name='index')
+    path('index/', views.SearchView.as_view(), name='index')
 ]
