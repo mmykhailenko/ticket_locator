@@ -4,10 +4,15 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 DJANGO_SECRET_KEY = env('DJANGO_SECRET_KEY')
+DJANGO_ADMIN_EMAIL = env('DJANGO_ADMIN_EMAIL')
+DJANGO_ADMIN_PASSWORD = env('DJANGO_ADMIN_PASSWORD')
 SINGAPOREAIR_API_KEY = env('SINGAPOREAIR_API_KEY')
 TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
 TURKISHAIRLINES_API_KEY = env('TURKISHAIRLINES_API_KEY')
 TURKISHAIRLINES_SECRET_KEY = env('TURKISHAIRLINES_SECRET_KEY')
+POSTGRES_DB = env('POSTGRES_DB')
+POSTGRES_USER = env('POSTGRES_USER')
+POSTGRES_PASSWORD = env('POSTGRES_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,8 +77,14 @@ WSGI_APPLICATION = 'ticket_locator.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': 'dbpsql',
+        'PORT': 5432,
+        # 'HOST': '127.0.0.1',
+        # 'PORT': 9000,
     }
 }
 
@@ -114,6 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Celery settings
+# REDIS_HOST = "127.0.0.1"
 REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"

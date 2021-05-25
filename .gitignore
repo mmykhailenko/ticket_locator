@@ -121,8 +121,8 @@ venv.bak/
 ticket_locator/.env
 pg4.env
 dev.env
-dev.env
 psql.env
+dbdata
 
 
 # Spyder project settings

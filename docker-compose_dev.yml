@@ -12,7 +12,7 @@ services:
     volumes:
       - ./hello_world:/app/hello_world
       - ./ticket_locator:/app/ticket_locator
-    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py runserver 0.0.0.0:8000"
+    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py init_admin && python app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - redis
       - pgadmin
@@ -54,13 +54,14 @@ services:
     image: postgres:latest
     container_name: postgres
     env_file:
-      - psql.env
+      - ticket_locator/.env
     restart: always
     hostname: dbpsql
     networks:
       - django_network
     ports:
       - 9000:5432
+#      - 127.0.0.1:9000:5432
     volumes:
       - ./dbdata:/var/lib/postgresql/data
 
@@ -69,7 +70,7 @@ services:
     container_name: pg4_l
     restart: unless-stopped
     env_file:
-      - pg4.env
+      - ticket_locator/.env
     ports:
       - 5500:80
     depends_on:
@@ -88,6 +89,3 @@ services:
 
 networks:
   django_network:
-
-
-

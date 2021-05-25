@@ -10,6 +10,8 @@ from ticket_locator.services.transavia_service import TransaviaService
 from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
 from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, FlightSearchSerializer
 
+from hello_world.tasks import create_task
+
 
 class UserView(GenericAPIView):
     serializer_class = UsersListSerializer
@@ -63,6 +65,7 @@ class FlightSearchView(GenericAPIView):
 class SearchAirRoute(View):  # view for which renders and processes the search form on the main page
     def get(self, request):
         form = SearchAirRouteForm()
+        create_task.delay(7)
         return render(request=request, template_name="hello_world/index.html", context={"form": form})
 
     def post(self, request):
