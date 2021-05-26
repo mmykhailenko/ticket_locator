@@ -83,8 +83,6 @@ DATABASES = {
         'PASSWORD': POSTGRES_PASSWORD,
         'HOST': 'dbpsql',
         'PORT': 5432,
-        # 'HOST': '127.0.0.1',
-        # 'PORT': 9000,
     }
 }
 
@@ -125,7 +123,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Celery settings
-# REDIS_HOST = "127.0.0.1"
 REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"

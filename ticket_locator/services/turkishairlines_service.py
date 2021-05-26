@@ -1,5 +1,6 @@
 import json
 import requests
+import datetime
 from ticket_locator.services.constants import SUCCESS
 from ticket_locator import settings
 from ticket_locator.services.base_service import AirCompanyService
@@ -58,19 +59,7 @@ class TurkishAirlinesService(AirCompanyService):
     }
 
     def _param_prepare(self, **kwargs):
-        date = kwargs['date'][6:8] + {'01': 'JAN',
-                                      '02': 'FEB',
-                                      '03': 'MAR',
-                                      '04': 'APR',
-                                      '05': 'MAY',
-                                      '06': 'JUN',
-                                      '07': 'JUL',
-                                      '08': 'AUG',
-                                      '09': 'SEP',
-                                      '10': 'OCT',
-                                      '11': 'NOV',
-                                      '12': 'DEC',
-                                      }[kwargs['date'][4:6]]
+        date = datetime.datetime.strptime(kwargs['date'], '%Y%m%d').__format__('%d%b').upper()
         params = self._params['OriginDestinationInformation'][0]
         params['OriginLocation']['LocationCode'] = kwargs['departure_airport']
         params['DestinationLocation']['LocationCode'] = kwargs['arrival_airport']
