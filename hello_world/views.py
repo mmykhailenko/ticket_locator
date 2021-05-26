@@ -54,5 +54,6 @@ class FlightSearchView(GenericAPIView):
                             result += flight
                 else:
                     result += flight_info
+            print(result)
             return Response({'result': result, 'serializer': serializer_class}, template_name='hello_world/response.html')
-        return Response({'serializer': serializer_class})
+        return Response({'serializer': serializer_class}, template_name='hello_world/response.html')

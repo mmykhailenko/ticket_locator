@@ -9,6 +9,10 @@ TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
 TURKISHAIRLINES_API_KEY = env('TURKISHAIRLINES_API_KEY')
 TURKISHAIRLINES_SECRET_KEY = env('TURKISHAIRLINES_SECRET_KEY')
 
+NAME_DB = env('NAME_DB')
+USER_DB = env('USER_DB')
+PASSWORD_DB = env('PASSWORD_DB')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -70,10 +74,21 @@ WSGI_APPLICATION = 'ticket_locator.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': NAME_DB,
+        'USER': USER_DB,
+        'PASSWORD': PASSWORD_DB,
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
