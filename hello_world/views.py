@@ -60,7 +60,6 @@ class FlightSearchView(GenericAPIView):
                 pass
             for flight in flights.get():
                 result += flight
-            print(result)
             return Response(result)
         return Response({'Error': 'Please fill all fields.'})
 
