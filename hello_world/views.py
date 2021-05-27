@@ -10,6 +10,14 @@ from ticket_locator.services.transavia_service import TransaviaService
 from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
 from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, FlightSearchSerializer
 
+from celery import group
+from hello_world.tasks import get_air_data
+
+AIRLINES = (
+    'TurkishAirlinesService',
+    'TransaviaService',
+    'SingaporeAirService'
+)
 
 class UserView(GenericAPIView):
     serializer_class = UsersListSerializer
@@ -45,17 +53,13 @@ class FlightSearchView(GenericAPIView):
     def post(self, request):
         result = []
         if request.data['departure_airport'] and request.data['arrival_airport'] and request.data['departure_date']:
-            for air_company in [SingaporeAirService, TransaviaService, TurkishAirlinesService]:
-                flight_info = air_company().get_flight_info_by_date(
-                    request.data['departure_airport'],
-                    request.data['arrival_airport'],
-                    ''.join(request.data['departure_date'].split('-')))
-                if request.data.get('direct_flight', None):
-                    for flight in flight_info:
-                        if len(flight) < 2:
-                            result += [flight]
-                else:
-                    result += flight_info
+            request_data = request.data
+            air_tasks = group([get_air_data.s(airline, request_data) for airline in AIRLINES])
+            flights = air_tasks.apply_async()
+            while not flights.ready():
+                pass
+            for flight in flights.get():
+                result += flight
             return Response(result)
         return Response({'Error': 'Please fill all fields.'})
 
