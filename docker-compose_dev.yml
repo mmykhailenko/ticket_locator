@@ -1,8 +1,7 @@
 version: "3.7"
 services:
   web:
-    build:
-      context: .
+    build: .
     restart: unless-stopped
     image: ticket_locator_web
     ports:
@@ -12,7 +11,6 @@ services:
     volumes:
       - ./hello_world:/app/hello_world
       - ./ticket_locator:/app/ticket_locator
-    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - redis
       - pgadmin
@@ -24,7 +22,9 @@ services:
     restart: always
     links:
       - redis
-    entrypoint: celery -A ticket_locator worker -l INFO
+    env_file:
+      - ticket_locator/.env
+    entrypoint: celery worker --app=ticket_locator --loglevel=info
     volumes:
       - ./hello_world:/app/hello_world
       - ./ticket_locator:/app/ticket_locator
@@ -46,15 +46,17 @@ services:
     command:
       - celery -A ticket_locator flower
     ports:
-      - "5555:5555"
+      - 5555:5555
     depends_on:
       - celery
+      - web
+      - redis
 
   dbpsql:
     image: postgres:latest
     container_name: postgres
     env_file:
-      - psql.env
+      - ticket_locator/.env
     restart: always
     hostname: dbpsql
     networks:
@@ -69,7 +71,7 @@ services:
     container_name: pg4_l
     restart: unless-stopped
     env_file:
-      - pg4.env
+      - ticket_locator/.env
     ports:
       - 5500:80
     depends_on:

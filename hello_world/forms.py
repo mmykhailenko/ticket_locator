@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
 
+
 from .models import User
 
 
@@ -26,3 +27,10 @@ class SearchAirRouteForm(forms.Form):
     arrival_airport = forms.CharField(max_length=3, widget=departure_airport_widget)
     departure_date = forms.DateField(widget=departure_date_widget)
     direct_flight = forms.BooleanField(required=False)
+
+    def clean_departure_date(self):
+        data = self.cleaned_data['departure_date']
+        prepared_date = (data.strftime('%Y-%m-%d'))
+        return prepared_date
+
+

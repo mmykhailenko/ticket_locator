@@ -8,6 +8,13 @@ SINGAPOREAIR_API_KEY = env('SINGAPOREAIR_API_KEY')
 TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
 TURKISHAIRLINES_API_KEY = env('TURKISHAIRLINES_API_KEY')
 TURKISHAIRLINES_SECRET_KEY = env('TURKISHAIRLINES_SECRET_KEY')
+DB_PASS = env("DB_PASS")
+DB_HOST = env("DB_HOST")
+DB_PORT = env("DB_PORT")
+DB_USER = env("DB_USER")
+DB_NAME = env("DB_NAME")
+DJANGO_SUPERUSER_EMAIL = env("DJANGO_SUPERUSER_EMAIL")
+DJANGO_SUPERUSER_PASSWORD = env("DJANGO_SUPERUSER_PASSWORD")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,8 +79,12 @@ WSGI_APPLICATION = 'ticket_locator.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
     }
 }
 
@@ -108,6 +119,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -119,7 +132,7 @@ REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
 CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
 CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TASK_TIME_LIMIT = 60
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
