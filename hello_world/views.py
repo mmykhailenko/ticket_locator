@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 
 from .models import User, SearchHistory
 from ticket_locator.services.singaporeair_service import SingaporeAirService
@@ -27,7 +28,7 @@ class SearchHistoryView(APIView):
 		return Response(serializer.data)
 
 
-class FlightSearchView(APIView):
+class FlightSearchView(GenericAPIView):
 	serializer_class = FlightSearchSerializer
 
 	def post(self, request):
