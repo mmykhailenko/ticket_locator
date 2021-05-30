@@ -118,6 +118,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+bot/bot.env
 ticket_locator/.env
 pg4.env
 dev.env

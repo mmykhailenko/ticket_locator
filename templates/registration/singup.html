@@ -1,0 +1,15 @@
+{%extends "hello_world/index.html"%}
+{% load crispy_forms_tags %}
+{% block title %}Create an account{% endblock %}
+
+{% block content %}
+    <h4>Create an account</h4>
+    <p>Please, sign up using the following form:</p>
+    <form action="." method="post">
+        <input type="hidden" name="next" value="{{ next }}">
+        {{ form|crispy }}
+        {% csrf_token %}
+        <p></p>
+        <p><input type="submit" value="Create my account" class="btn btn-primary"></p>
+    </form>
+{% endblock %}

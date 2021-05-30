@@ -1,0 +1,8 @@
+{%extends "hello_world/index.html"%}
+
+{% block title %}Change password{% endblock %}
+
+{% block content %}
+    <h4>Change password</h4>
+    <p><a href="{% url 'password_change' %}">Change password</a></p>
+{% endblock %}

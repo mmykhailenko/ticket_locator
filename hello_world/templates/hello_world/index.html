@@ -6,16 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Ticket Locator</title>
       <!-- Bootstrap CSS (Cloudflare CDN) -->
-      <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" rel="stylesheet">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
       </head>
+        {% include "hello_world/menu.html"%}
         <body>
             <div class="container">
                 <div class="col">
                 <form action="{% url 'index' %}" method="post">
                      {% csrf_token %}
-                          {{form}}
+                          {{form_search}}
                     <p></p>
+                    {%if form_search%}
                     <input type="submit" value="Search" class="btn btn-primary">
+                    {%endif%}
                 </form>
                 </div>
             </div>

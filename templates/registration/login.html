@@ -1,0 +1,24 @@
+{%extends "hello_world/index.html"%}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+{%if user.is_authenticated%}
+<div>
+<h5>You are already logged into the site</h5>
+<a class="nav-link" href="{% url 'index' %}">Main page</a>
+  </div>
+{%else%}
+ <div>
+    <h4>Log in to your account</h4>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <p></p>
+        <p><input type="submit" value="Log in" class="btn btn-primary"></p>
+      </form>
+</div>
+{%endif%}
+{% endblock %}

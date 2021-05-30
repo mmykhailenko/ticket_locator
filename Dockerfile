@@ -1,10 +1,14 @@
-FROM python:3.8.9-alpine3.13
-WORKDIR /app
+FROM python:latest
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-COPY hello_world app/hello_world
-COPY ticket_locator app/ticket_locator
-COPY manage.py app/manage.py
-COPY wait-for-it.sh app/wait-for-it.sh
-COPY requirements.txt app/requirements.txt
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev && apk add bash
-RUN chmod +x app/wait-for-it.sh && pip install -r app/requirements.txt
+COPY hello_world hello_world/
+COPY ticket_locator ticket_locator/
+COPY templates templates/
+COPY manage.py manage.py
+COPY wait-for-it.sh wait-for-it.sh
+COPY entrypoint.sh entrypoint.sh
+COPY README.md README.md
+RUN pip install --upgrade pip
+COPY requirements.txt requirements.txt
+RUN chmod +x wait-for-it.sh && chmod +x entrypoint.sh && pip install -r requirements.txt
+ENTRYPOINT ["./entrypoint.sh"]

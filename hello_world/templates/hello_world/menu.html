@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="{% url 'index' %}"><strong>TICKET LOCATOR</strong></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        {%if user.is_authenticated%}
+          <li class="nav-item active">
+            <span class="nav-link">User {{user.email}}</span>
+          </li>
+    </ul>
+      </div>
+
+      <div class="collapse navbar-collapse" style="position:absolute; left:1450px;">
+          <ul class="navbar-nav mr-auto">
+         {%if user.is_superuser%}
+            <li class="nav-item active">
+            <a class="nav-link" href="{%url 'admin:index'%}">Admin panel</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'personal_aria'%}">Personal area</a>
+          </li>
+
+          {%elif not user.is_superuser%}
+            <li class="nav-item active">
+            <a class="nav-link" href="{% url 'personal_aria'%}">Personal area</a>
+          </li>
+           {%endif%}
+          <li class="nav-item active">
+        <a class="nav-link" href="">Your history</a>
+            </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{%url 'logout'%}">Log out</a>
+          </li>
+        {%else%}
+            <li class="nav-item active">
+        <a class="nav-link" href="{% url 'login'%}">login in</a>
+      </li>
+         <li class="nav-item active">
+            <a class="nav-link" href="{% url 'singup'%}">Sing up</a>
+          </li>
+          </ul>
+          {%endif%}
+        </div>
+
+</nav>
