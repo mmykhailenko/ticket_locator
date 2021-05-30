@@ -11,4 +11,3 @@ urlpatterns = [
 ]
 
 urlpatterns += swagger
-print(urlpatterns)

@@ -58,8 +58,6 @@ class SearchView(View):
 	def post(self, request):
 		form = forms.SearchTourForm(request.POST)
 		if form.is_valid():
-			# request.data = request.POST
-			print(form.cleaned_data)
 			request.data = form.cleaned_data
 			result = FlightSearchView().post(request)
 			return render(request, "hello_world/search_result.html", {'result': result.data, 'form': form})

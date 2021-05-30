@@ -1,8 +1,11 @@
+import os
 from pathlib import Path
 import environ
 
 env = environ.Env()
 environ.Env.read_env()
+DJANGO_ADMIN_EMAIL = env("DJANGO_ADMIN_EMAIL")
+DJANGO_ADMIN_PASSWORD = env("DJANGO_ADMIN_PASSWORD")
 DJANGO_SECRET_KEY = env('DJANGO_SECRET_KEY')
 SINGAPOREAIR_API_KEY = env('SINGAPOREAIR_API_KEY')
 TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
@@ -76,7 +79,7 @@ DATABASES = {
         'NAME': 'ticket_locator_db',
         'USER': 'ticket',
         'PASSWORD': 'ticket',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432'
     }
 }
@@ -123,3 +126,5 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'hello_world.User'
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
