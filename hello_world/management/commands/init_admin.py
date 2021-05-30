@@ -4,9 +4,10 @@ from ticket_locator import settings
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         User = get_user_model()
         if not User.objects.filter(email=settings.DJANGO_ADMIN_EMAIL).exists():
-            User.objects.create_superuser(email=settings.DJANGO_ADMIN_EMAIL,
-                                          password=settings.DJANGO_ADMIN_PASSWORD)
+            User.objects.create_superuser(
+                email=settings.DJANGO_ADMIN_EMAIL,
+                password=settings.DJANGO_ADMIN_PASSWORD,
+            )
