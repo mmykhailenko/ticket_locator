@@ -118,7 +118,7 @@ class SingUp(View):
         form = SingUpForm(request.POST)
         if form.is_valid():
             new_user = form.save(commit=False)
-            new_user.set_password(form.cleaned_data['password'])
+            new_user.set_password(form.cleaned_data['password2'])
             new_user.save()
             return render(request, 'registration/singup_done.html', {'new_user': new_user})
         else:
