@@ -33,8 +33,8 @@ def start(message):
 
 @bot.message_handler(func=lambda message:message.text.startswith('/search'))
 def search(message):
-    response_data = _create_respons_data(message)
-    response = requests.post(url="http://127.0.0.1:8000/api/search",data = response_data)
+    request_data = _create_request_data(message)
+    response = requests.post(url="http://127.0.0.1:8000/api/search",data = request_data)
     if response.status_code == 200:
         if not response.json():
             return bot.send_message(message.chat.id, text="Alas, there are no options")
@@ -42,7 +42,8 @@ def search(message):
         for flight_route in response.json():
             result_str = f"Option {counter} \n \n"
             for flight_unit in flight_route:
-                text_result = f'Airline {flight_unit["Airline"]} \nFlightNumber {flight_unit["FlightNumber"]} \n' \
+                text_result = f'Airline {flight_unit["Airline"]} \n' \
+                              f'FlightNumber {flight_unit["FlightNumber"]} \n' \
                               f'DepartureAirport {flight_unit["DepartureAirport"]} \n' \
                               f'ArrivalAirport {flight_unit["ArrivalAirport"]} \n' \
                               f'DepartureTime {flight_unit["DepartureTime"]} \n' \
@@ -53,7 +54,7 @@ def search(message):
         return
     return bot.send_message(message.chat.id, text="Oh something went wrong, try again")
 
-def _create_respons_data(message):
+def _create_request_data(message):
     data_from_message = (message.text).split(" ")[1:]
     if len(data_from_message) != 4:
         return bot.send_message(message.chat.id, text="You entered the wrong number of parameters")
@@ -63,13 +64,13 @@ def _create_respons_data(message):
         else:
             data_from_message[3] = False
     print(data_from_message)
-    response_data = {
+    request_data = {
         "departure_airport": (data_from_message[0]).upper(),
         "arrival_airport": (data_from_message[1]).upper(),
         "departure_date": data_from_message[2],
         "direct_flight": data_from_message[3]
     }
-    return response_data
+    return request_data
 
 
 if __name__ == "__main__":
