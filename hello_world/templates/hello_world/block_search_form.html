@@ -1,0 +1,16 @@
+<div class="container bg-dark rounded">
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        <div class="input-group">
+            {{form.departure_airport}}
+            {{form.arrival_airport}}
+            {{form.departure_date}}
+            <input type="submit" class="btn btn-dark mt-4" value="Поиск">
+        </div>
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" name="direct_flight" id="id_direct_flight">
+            <label class="custom-control-label text-light" for="id_direct_flight">Прямой рейс</label>
+        </div>
+    </form>
+</div>
+<hr class="mt-0 mb-0 bg-light"/>

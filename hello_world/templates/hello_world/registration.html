@@ -1,0 +1,32 @@
+{% extends 'hello_world/base.html' %}
+
+{% block title %}
+Регистрация
+{%endblock%}
+
+{% block content %}
+<div class="container bg-light w-25 rounded">
+    <form class="form-signin" method="post">
+        {% csrf_token %}
+        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+        <label for="id_{{form.email.name}}" class="sr-only">Ваш еmail</label>
+        <input type="email" id="id_{{form.email.name}}" name="{{form.email.name}}" class="form-control"
+               placeholder="Ваш еmail" required autofocus>
+        <label for="{{form.password1.id_for_label}}" class="sr-only">Password</label>
+        <input type="password" id="{{form.password1.id_for_label}}" name="{{form.password1.name}}" class="form-control"
+               placeholder="Пароль" required>
+        <label for="{{form.password2.id_for_label}}" class="sr-only">Password</label>
+        <input type="password" id="{{form.password2.id_for_label}}" name="{{form.password2.name}}" class="form-control"
+               placeholder="Повторите пароль" required>
+        <input name="create_user" class="btn btn-lg btn-primary btn-block" type="submit" value="Зарегистрировать">
+        {% if result == "Wrong" %}
+        <label class="text-danger">Что-то пошло не так!</label>
+        <label class="text-danger">Проверьте введённый email.</label>
+        <label class="text-danger">Ваш пароль не может быть таким-же как email.</label>
+        <label class="text-danger">Ваш пароль должен содердать больше 8 символов.</label>
+        <label class="text-danger">Ваш пароль не может быть только из цифр.</label>
+        {% endif %}
+        <p class="mt-2 mb-3">&copy; 2021-...</p>
+    </form>
+</div>
+{%endblock%}
