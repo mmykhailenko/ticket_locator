@@ -14,7 +14,7 @@ from . import constants
 def start(update: Update, _: CallbackContext) -> None:
     user_name = update.message.chat.first_name
     reply_text = f'\U00002708 Привет {user_name}!\n' \
-                 f'\U00002708 Рады видеть тебя:)\U0000270A\n\git statusn' \
+                 f'\U00002708 Рады видеть тебя:)\U0000270A\n\n' \
                  f'\U00002708 Нужна помощь? Введите /help'
     update.message.reply_text(text=reply_text)
 
