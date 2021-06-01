@@ -75,7 +75,14 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
         )
 
     def post(self, request):
-        form = SearchAirRouteForm(request.POST)
+
+        request_post = {}
+        for item in request.POST:
+            request_post[item] = request.POST[item]
+        request_post['departure_airport'] = request_post['departure_airport'].split(',')[0][-4:-1]
+        request_post['arrival_airport'] = request_post['arrival_airport'].split(',')[0][-4:-1]
+        form = SearchAirRouteForm(request_post)
+
         if form.is_valid():
             form.cleaned_data["departure_date"] = form.cleaned_data["departure_date"].strftime("%Y-%m-%d")
             if request.user.is_authenticated:
@@ -92,6 +99,7 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
                 for flight_item in flight:
                     flight_item['AirlineLogo'] = logos.get(flight_item.get('Airline'))
             return render(request, "hello_world/index.html", {"result": result, "form": form})
+        return redirect('/')
 
 
 class Logout(View):
