@@ -1,0 +1,25 @@
+{% extends 'hello_world/base.html' %}
+
+{% block title %}
+Вход
+{%endblock%}
+
+{% block content %}
+<div class="container bg-light w-25 rounded">
+    <form class="form-signin" method="post">
+        {% csrf_token %}
+        <h1 class="h3 mb-3 font-weight-normal">Вход</h1>
+        <label for="id_{{form.email.name}}" class="sr-only">Ваш еmail</label>
+        <input type="email" id="id_{{form.email.name}}" name="{{form.email.name}}" class="form-control"
+               placeholder="Ваш еmail" required autofocus>
+        <label for="{{form.password.id_for_label}}" class="sr-only">Password</label>
+        <input type="password" id="{{form.password.id_for_label}}" name="{{form.password.name}}" class="form-control"
+               placeholder="Пароль" required>
+        <input name="login" class="btn btn-lg btn-primary btn-block" type="submit" value="Войти">
+        {% if result == "Wrong" %}
+        <label class="text-danger">Неверный логин или пароль!</label>
+        {% endif %}
+        <p class="mt-2 mb-3">&copy; 2021-...</p>
+    </form>
+</div>
+{%endblock%}

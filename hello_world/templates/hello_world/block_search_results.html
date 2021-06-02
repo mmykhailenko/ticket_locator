@@ -1,0 +1,36 @@
+{%if result != "init"%}
+    {%if result%}
+        {%for flight_info in result %}
+        <div class="container bg-white w-100 rounded">
+            <div class="mt-3">
+                {%for flight_item in flight_info %}
+                    <div class="text-center mx-auto align-items-center">
+                        <img src={{flight_item.AirlineLogo}} height="50">
+                        &nbsp;
+                        <strong>{{flight_item.Airline}}{{flight_item.FlightNumber}}</strong>
+                        &nbsp;&nbsp;&nbsp;
+                        <img src="/static/images/departure.png" height="50">
+                        &nbsp;&nbsp;&nbsp;
+                        <strong>{{flight_item.DepartureAirport}}&nbsp;&nbsp;&nbsp;{{flight_item.DepartureTime|slice:"0:10:1"}}
+                            {{flight_item.DepartureTime|slice:"11:-3:"}}</strong>
+                        &nbsp;&nbsp;&nbsp;
+                        <img src="/static/images/arrival.png" height="50">
+                        &nbsp;&nbsp;&nbsp;
+                        <strong>{{flight_item.ArrivalAirport}}&nbsp;&nbsp;&nbsp;{{flight_item.ArrivalTime|slice:"0:10:1"}}
+                            {{flight_item.ArrivalTime|slice:"11:-3:"}}</strong>
+                        &nbsp;&nbsp;&nbsp;
+                        <img src='/static/images/stop.png' height="50">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        <hr class="mt-3 mb-0 bg-light"/>
+    {%else%}
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="h3 text-light">Жаль, но мы ничего не нашли...</label>
+        </div>
+    </div>
+    {%endif%}
+{%endif%}

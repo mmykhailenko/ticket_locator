@@ -18,10 +18,26 @@ services:
       - pgadmin
       - dbpsql
 
+  bot:
+    image: ticket_locator_web
+    container_name: TelegramBot
+    restart: unless-stopped
+    links:
+      - redis
+    entrypoint: python app/manage.py bot
+    volumes:
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+
   celery:
     image: ticket_locator_web
     container_name: celeryTL
-    restart: always
+    restart: unless-stopped
     links:
       - redis
     entrypoint: celery -A ticket_locator worker -l INFO
@@ -46,7 +62,7 @@ services:
     command:
       - celery -A ticket_locator flower
     ports:
-      - "5555:5555"
+      - 5555:5555
     depends_on:
       - celery
 
@@ -61,7 +77,6 @@ services:
       - django_network
     ports:
       - 9000:5432
-#      - 127.0.0.1:9000:5432
     volumes:
       - ./dbdata:/var/lib/postgresql/data
 
