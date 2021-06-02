@@ -1,12 +1,36 @@
-<div class="container bg-dark rounded">
-    <form action="{% url 'index' %}" method="post">
+<div class="container bg-dark rounded" style="margin-top:10px;">
+    <form autocomplete="off" action="{% url 'index' %}" method="post">
         {% csrf_token %}
-        <div class="input-group">
-            {{form.departure_airport}}
-            {{form.arrival_airport}}
-            {{form.departure_date}}
-            <input type="submit" class="btn btn-dark mt-4" value="Поиск">
-        </div>
+        <table border="0" width="100%">
+            <tr>
+                <td>
+                    <div class="autocomplete" style="width:100%">
+                        <input type="text" name="departure_airport" placeholder="Откуда:" required
+                               class="form-control" pattern=".* \([A-Z]{3}\),.*"
+                               id="id_departure_airport"
+                               oninvalid="this.setCustomValidity('Выберите вариант из списка!')"
+                               oninput="this.setCustomValidity('')"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="autocomplete" style="width:100%">
+                        <input type="text" name="arrival_airport" placeholder="Откуда:" required
+                               class="form-control" pattern=".* \([A-Z]{3}\),.*"
+                               id="id_arrival_airport"
+                               oninvalid="this.setCustomValidity('Выберите вариант из списка!')"
+                               oninput="this.setCustomValidity('')"/>
+                    </div>
+                </td>
+                <td>
+                    <input type="date" name="departure_date" required class="form-control" id="id_departure_date"
+                           oninvalid="this.setCustomValidity('Выберите дату вылета!')"
+                           oninput="this.setCustomValidity('')"/>
+                </td>
+                <td align="center">
+                    <input type="submit" class="btn btn-dark" value="Поиск">
+                </td>
+            </tr>
+        </table>
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" name="direct_flight" id="id_direct_flight">
             <label class="custom-control-label text-light" for="id_direct_flight">Прямой рейс</label>
