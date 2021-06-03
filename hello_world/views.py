@@ -1,7 +1,9 @@
 from django.contrib.auth import logout, authenticate, login
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -12,6 +14,9 @@ from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistor
 
 from celery import group
 from hello_world.tasks import get_air_data
+from ticket_locator.services.singaporeair_service import SingaporeAirService
+from ticket_locator.services.transavia_service import TransaviaService
+from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
 
 AIRLINES = ("TurkishAirlinesService", "TransaviaService", "SingaporeAirService")
 
@@ -47,6 +52,10 @@ class SearchHistoryView(GenericAPIView):
 class FlightSearchView(GenericAPIView):
     serializer_class = FlightSearchSerializer
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.flight_info = None
+
     @staticmethod
     def get_air_info(request_data):
         result = []
@@ -58,11 +67,36 @@ class FlightSearchView(GenericAPIView):
             result += flight
         return result
 
+    def start_get_air_info(self,air_company, request_data):
+        result = []
+        departure_airport = request_data["departure_airport"]
+        arrival_airport = request_data["arrival_airport"]
+        departure_date = "".join(request_data["departure_date"].split("-"))
+        direct_flight = request_data.get("direct_flight")
+        airlines = {
+            "TurkishAirlinesService": TurkishAirlinesService,
+            "TransaviaService": TransaviaService,
+            "SingaporeAirService": SingaporeAirService,
+        }
+        if not self.flight_info:
+            self.flight_info = airlines[air_company]().get_flight_info_by_date(
+                departure_airport, arrival_airport, departure_date
+            )
+        if direct_flight:
+            for flight in self.flight_info:
+                if len(flight) < 2:
+                    result += [flight]
+        else:
+            result += self.flight_info
+        return result
+
     def post(self, request):
-        if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
-            result = self.get_air_info(request.data)
-            return Response(result)
-        return Response({"Error": "Please fill all fields."})
+        try:
+            if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
+                result = self.get_air_info(request.data)
+                return Response(result,status=status.HTTP_201_CREATED)
+        except MultiValueDictKeyError:
+            return Response({"Error": "Please fill all fields."})
 
 
 class SearchAirRoute(View):  # view for which renders and processes the search form on the main page
@@ -82,9 +116,7 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
         request_post['departure_airport'] = request_post['departure_airport'].split(',')[0][-4:-1]
         request_post['arrival_airport'] = request_post['arrival_airport'].split(',')[0][-4:-1]
         form = SearchAirRouteForm(request_post)
-
         if form.is_valid():
-            form.cleaned_data["departure_date"] = form.cleaned_data["departure_date"].strftime("%Y-%m-%d")
             if request.user.is_authenticated:
                 user = User.objects.filter(email=request.user)[0]
                 data = form.cleaned_data
@@ -99,7 +131,7 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
                 for flight_item in flight:
                     flight_item['AirlineLogo'] = logos.get(flight_item.get('Airline'))
             return render(request, "hello_world/index.html", {"result": result, "form": form})
-        return redirect('/')
+
 
 
 class Logout(View):
@@ -109,6 +141,7 @@ class Logout(View):
 
 
 class RegistrationView(View):
+
     def get(self, request):
         form = RegistrationForm()
         context = {"result": "init", 'form': form}

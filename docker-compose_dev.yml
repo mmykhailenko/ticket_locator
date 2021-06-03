@@ -18,21 +18,21 @@ services:
       - pgadmin
       - dbpsql
 
-  bot:
-    image: ticket_locator_web
-    container_name: TelegramBot
-    restart: unless-stopped
-    links:
-      - redis
-    entrypoint: python app/manage.py bot
-    volumes:
-      - ./hello_world:/app/hello_world
-      - ./ticket_locator:/app/ticket_locator
-    networks:
-      - django_network
-    depends_on:
-      - web
-      - redis
+#  bot:
+#    image: ticket_locator_web
+#    container_name: TelegramBot
+#    restart: unless-stopped
+#    links:
+#      - redis
+#    entrypoint: python app/manage.py bot
+#    volumes:
+#      - ./hello_world:/app/hello_world
+#      - ./ticket_locator:/app/ticket_locator
+#    networks:
+#      - django_network
+#    depends_on:
+#      - web
+#      - redis
 
   celery:
     image: ticket_locator_web

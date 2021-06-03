@@ -51,6 +51,11 @@ class SearchAirRouteForm(forms.Form):
     departure_date = forms.DateField(widget=departure_date_widget)
     direct_flight = forms.BooleanField(required=False)
 
+    def clean_departure_date(self):
+        data = self.cleaned_data['departure_date']
+        prepared_date = (data.strftime('%Y-%m-%d'))
+        return prepared_date
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.CharField(widget=forms.TextInput())
