@@ -129,7 +129,7 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
                 for flight_item in flight:
                     flight_item['AirlineLogo'] = logos.get(flight_item.get('Airline'))
             return render(request, "hello_world/index.html", {"result": result, "form": form})
-        return render("/")
+        return redirect("/")
 
 
 
