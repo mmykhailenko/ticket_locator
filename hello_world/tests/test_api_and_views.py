@@ -1,12 +1,12 @@
+import json
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIRequestFactory,force_authenticate
+from rest_framework.test import APITestCase, APIRequestFactory
 from hello_world.models import User, SearchHistory
 from hello_world.serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer
-import json
 from unittest.mock import MagicMock
-from hello_world.views import FlightSearchView, SearchAirRoute
-from django.test import Client, TestCase
+from hello_world.views import FlightSearchView
+from django.test import Client
 
 
 class UserViewTest(APITestCase):
@@ -85,13 +85,13 @@ class FlightSearchViewTest(APITestCase):
         FlightSearchView.get_air_info = MagicMock(return_value=self.test_response_data)
         self.factory = APIRequestFactory()
         self.view = FlightSearchView.as_view()
-        self.requests_data1 = {"departure_airport": 'IBZ', "arrival_airport": 'AMS', "departure_date": "2021-06-06"}
-        self.requests_data2 = {"departure_airport": 'IBZ', "arrival_airport": 'AMS', "departure_date": "2021-06-06",
-                               "direct_flight": True}
+        self.test_data1 = {"departure_airport": 'IBZ', "arrival_airport": 'AMS', "departure_date": "2021-06-06"}
+        self.test_data2 = {"departure_airport": 'IBZ', "arrival_airport": 'AMS', "departure_date": "2021-06-06",
+                           "direct_flight": True}
 
     def test_post_input_data_ok(self):
         url = reverse("search")
-        request = self.factory.post(url, self.requests_data1)
+        request = self.factory.post(url, self.test_data1)
         response = self.view(request)
         self.assertEqual(self.test_response_data, response.data)
 
@@ -104,13 +104,13 @@ class FlightSearchViewTest(APITestCase):
     def test_start_get_air_info_not_direct_flight(self):
         unit = FlightSearchView()
         unit.flight_info = self.test_response_data
-        result = unit.start_get_air_info(air_company="Test1", request_data=self.requests_data1)
+        result = unit.start_get_air_info(air_company="Test1", request_data=self.test_data1)
         self.assertEqual(result, unit.flight_info)
 
     def test_start_get_air_info_with_direct_flight(self):
         unit = FlightSearchView()
         unit.flight_info = self.test_response_data
-        result = unit.start_get_air_info(air_company="Test1", request_data=self.requests_data2)
+        result = unit.start_get_air_info(air_company="Test1", request_data=self.test_data2)
         self.assertEqual(result, [])
 
 
@@ -120,23 +120,19 @@ class TestSearchAirRoute(APITestCase):
         self.client = Client()
         self.email = "test1@gmail.com"
         self.password = "123456"
-        self.user = User.objects.create_user(self.email,self.password)
+        self.user = User.objects.create_user(self.email, self.password)
         self.request_data = {'departure_airport': 'Amsterdam Airport Schiphol (AMS), Amsterdam, NL',
                              'arrival_airport': 'Ibiza Airport (IBZ), Ibiza, ES', 'departure_date': '2021-06-06'}
         self.client.login(email=self.email, password=self.password)
 
-
     def test_post_user_anonymous(self):
         url = reverse("index")
         self.client.logout()
-        self.client.post(url, data = self.request_data)
+        self.client.post(url, data=self.request_data)
         self.assertFalse(SearchHistory.objects.all())
 
     def test_post_user_authenticated(self):
         url = reverse("index")
-        self.client.post(url, data = self.request_data)
+        self.client.post(url, data=self.request_data)
         self.assertTrue(SearchHistory.objects.get(user_id=self.user.id))
-        self.assertEqual(SearchHistory.objects.get(user_id=self.user.id).departure_city,"AMS")
-
-
-
+        self.assertEqual(SearchHistory.objects.get(user_id=self.user.id).departure_city, "AMS")
