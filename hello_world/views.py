@@ -1,3 +1,4 @@
+from django.core import exceptions
 from django.contrib.auth import logout, authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
@@ -9,6 +10,9 @@ from ticket_locator.services.constants import logos
 from .forms import SearchAirRouteForm, RegistrationForm, LoginForm
 from .models import User, SearchHistory
 from .serializers import UsersListSerializer, UserDetailSerializer, SearchHistorySerializer, FlightSearchSerializer
+from ticket_locator.services.singaporeair_service import SingaporeAirService
+from ticket_locator.services.transavia_service import TransaviaService
+from ticket_locator.services.turkishairlines_service import TurkishAirlinesService
 
 from celery import group
 from hello_world.tasks import get_air_data
@@ -27,7 +31,11 @@ class UserView(GenericAPIView):
     def get_queryset(self, pk=None):
         if not pk:
             return User.objects.all()
-        return User.objects.get(id=pk)
+        else:
+            try:
+                return User.objects.get(id=pk)
+            except exceptions.ObjectDoesNotExist:
+                return {"id": pk, "email": f"User with id ({pk}) not found."}
 
 
 class SearchHistoryView(GenericAPIView):
@@ -47,6 +55,35 @@ class SearchHistoryView(GenericAPIView):
 class FlightSearchView(GenericAPIView):
     serializer_class = FlightSearchSerializer
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.flight_info = None
+
+    @staticmethod
+    def start_get_air_info(air_company, request_data):
+        result = []
+        departure_airport = request_data["departure_airport"]
+        arrival_airport = request_data["arrival_airport"]
+        departure_date = "".join(request_data["departure_date"].split("-"))
+        direct_flight = request_data.get("direct_flight")
+        airlines = {
+            "TurkishAirlinesService": TurkishAirlinesService,
+            "TransaviaService": TransaviaService,
+            "SingaporeAirService": SingaporeAirService,
+        }
+        flight_info = airlines[air_company]().get_flight_info_by_date(
+            departure_airport, arrival_airport, departure_date
+        )
+
+        if direct_flight:
+            for flight in flight_info:
+                if len(flight) < 2:
+                    result += [flight]
+        else:
+            result += flight_info
+
+        return result
+
     @staticmethod
     def get_air_info(request_data):
         result = []
@@ -59,10 +96,12 @@ class FlightSearchView(GenericAPIView):
         return result
 
     def post(self, request):
-        if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
+        data = request.data
+        if data.get("departure_airport") and data.get("arrival_airport") and data.get("departure_date"):
             result = self.get_air_info(request.data)
             return Response(result)
-        return Response({"Error": "Please fill all fields."})
+        else:
+            return Response({"Error": "Please fill all fields."})
 
 
 class SearchAirRoute(View):  # view for which renders and processes the search form on the main page

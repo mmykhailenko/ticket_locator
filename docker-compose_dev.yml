@@ -71,7 +71,7 @@ services:
     container_name: postgres
     env_file:
       - ticket_locator/.env
-    restart: always
+    restart: unless-stopped
     hostname: dbpsql
     networks:
       - django_network
