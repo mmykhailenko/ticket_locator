@@ -6,4 +6,5 @@ logos = {
     'SQ': '/static/images/SQ.png',
     'LH': '/static/images/LH.png',
     'AJ': '/static/images/AJ.png',
+    'KL': '/static/images/KL.png',
 }
