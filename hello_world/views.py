@@ -91,12 +91,10 @@ class FlightSearchView(GenericAPIView):
         return result
 
     def post(self, request):
-        try:
-            if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
-                result = self.get_air_info(request.data)
-                return Response(result,status=status.HTTP_201_CREATED)
-        except MultiValueDictKeyError:
-            return Response({"Error": "Please fill all fields."})
+        if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
+            result = self.get_air_info(request.data)
+            return Response(result)
+        return Response({"Error": "Please fill all fields."})
 
 
 class SearchAirRoute(View):  # view for which renders and processes the search form on the main page
@@ -131,6 +129,7 @@ class SearchAirRoute(View):  # view for which renders and processes the search f
                 for flight_item in flight:
                     flight_item['AirlineLogo'] = logos.get(flight_item.get('Airline'))
             return render(request, "hello_world/index.html", {"result": result, "form": form})
+        return render("/")
 
 
 
