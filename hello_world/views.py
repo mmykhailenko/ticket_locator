@@ -42,7 +42,7 @@ class SearchHistoryView(APIView):
 
 
 class FlightSearchView(GenericAPIView):
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     serializer_class = FlightSearchSerializer
     renderer_classes = [JSONRenderer, TemplateHTMLRenderer]
     template_name = 'hello_world/response.html'
