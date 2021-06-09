@@ -5,14 +5,19 @@ services:
       context: .
     restart: unless-stopped
     image: ticket_locator_web
-    ports:
-      - 127.0.0.1:8000:8000
+#    ports:
+#      - 8000:8000
+    expose:
+      - 8000
     networks:
       - django_network
+    env_file:
+      - ticket_locator/.env
     volumes:
       - ./hello_world:/app/hello_world
       - ./ticket_locator:/app/ticket_locator
-    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py init_admin && python app/manage.py runserver 0.0.0.0:8000"
+      - ./static:/app/static
+    command: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py collectstatic && python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000 --reload"
     depends_on:
       - redis
       - pgadmin
@@ -102,5 +107,22 @@ services:
     ports:
       - 6379:6379
 
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./static:/app/static
+    ports:
+      - 1337:80
+    depends_on:
+      - dbpsql
+      - web
+      - redis
+    networks:
+      - django_network
+
+
 networks:
   django_network:
+
+#volumes:
+#  static:
