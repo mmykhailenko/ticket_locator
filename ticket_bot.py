@@ -68,7 +68,7 @@ def send_welcome(message):
     bot.reply_to(message, f'Привет, {user}! Я - бот.  '
                           f'Я помогу тебе найти рейс, Начни с "search:", '
                           f'далее укажи откуда и куда в формате IATA, укажи дату. '
-                          f'Например так:"search:SIN/LHR/2021-06-10' )
+                          f'Например так: "search:SIN/LHR/2021-06-10"' )
 
 
 @bot.message_handler(func=lambda message: message.text.startswith('search:'))
@@ -92,18 +92,6 @@ def get_text_messages(message):
                                                         f"Arrival airport: {flight['ArrivalAirport']} "
                                                         f"Departure time: {flight['DepartureTime']} "
                                                         f"Arrival time: {flight['ArrivalTime']}")
-
-
-@bot.message_handler(content_types=['text'])
-def echo_message(message):
-    user = str(message.from_user.first_name).title()
-    if message.text.lower().startswith('привет'):
-        bot.reply_to(message, f'Привет, {user}! Я - бот.  '
-                              f'Я помогу тебе найти рейс, Начни с "search:", '
-                              f'далее укажи откуда и куда в формате IATA, укажи дату. '
-                              f'Например так:"search:SIN/LHR/2021-06-10"')
-    elif not message.text.lower().startswith('search:'):
-        bot.reply_to(message, f'{user}, непонятно, но очень интересно :)')
 
 
 if __name__ == "__main__":
