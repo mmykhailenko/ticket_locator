@@ -1,27 +1,41 @@
-{% extends 'hello_world/index.html' %}
+{% extends 'index.html' %}
 {% load rest_framework %}
 
-{% block response %}
-    {%if not result %}
-        {% block form %}
-        <form action="{% url 'new_search' %}" method="POST">
-            {% csrf_token %}
-            {% render_form serializer template_pack='rest_framework/vertical'%}
-        <input type="submit" value="Search">
-        </form>
-        {% endblock form %}
-    {%else%}
-        {% for flight_info in result %}
-        {% for flight in flight_info %}
-            <div>
-                <p>Airline: {{ flight.Airline }}</p>
-                <p>Flight number: {{ flight.FlightNumber }}</p>
-                <p>Departure airport: {{ flight.DepartureAirport }}</p>
-                <p>Arrival airport: {{ flight.ArrivalAirport }}</p>
-                <p>Departure time: {{ flight.DepartureTime }}</p>
-                <p>Arrival time: {{ flight.ArrivalTime }}</p>
+{% block title %}Search{% endblock %}
+{% block dashboard %}Search{% endblock %}
+
+
+{% block content %}
+    {% if request.user.is_anonymous %}
+        <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+            <p>You are not logged in.</p>
+            <p><a href="{% url 'login' %}"> Log In </a></p><hr>
             </div>
-        {% endfor flight %}<hr>
-        {% endfor flight_info%}
-    {%endif%}
-{% endblock response%}
+            </div>
+    {% else %}
+        {%if not result %}
+            {% block form %}
+            <form action="{% url 'new_search' %}" method="POST">
+                {% csrf_token %}
+                {% render_form serializer template_pack='rest_framework/vertical'%}
+            <input type="submit" value="Search">
+            </form>
+            {% endblock form %}
+        {%else%}
+            {% for flight_info in result %}
+            {% for flight in flight_info %}
+                <div>
+                    <p>Airline: {{ flight.Airline }}</p>
+                    <p>Flight number: {{ flight.FlightNumber }}</p>
+                    <p>Departure airport: {{ flight.DepartureAirport }}</p>
+                    <p>Arrival airport: {{ flight.ArrivalAirport }}</p>
+                    <p>Departure time: {{ flight.DepartureTime }}</p>
+                    <p>Arrival time: {{ flight.ArrivalTime }}</p>
+                </div>
+            {% endfor flight %}<hr>
+            {% endfor flight_info%}
+        {%endif%}
+    {% endif %}
+{% endblock content%}

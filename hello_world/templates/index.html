@@ -23,8 +23,9 @@
         <div class="content container">
         <div class="row">
             <div class="col-md-8">
-                <p>Hi {{ user.email }}!</p>
+                <p>{% block msg %}Hello, {{ user.email }} !{% endblock %} </p>
                 <p><a href="{% url 'logout' %}">Log out</a></p>
+                <hr>
             </div>
             </div>
             </div>

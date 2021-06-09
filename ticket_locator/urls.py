@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from hello_world import urls
 from rest_framework.schemas import get_schema_view
@@ -19,4 +20,7 @@ urlpatterns = [
         template_name='swagger-ui.html',
         extra_context={'schema_url':'openapi-schema'}
     ), name='swagger-ui'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+
 ]

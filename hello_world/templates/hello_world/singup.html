@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% load rest_framework %}
+
+{% block title %}SingUp{% endblock %}
+{% block dashboard %}SingUp{% endblock %}
+
+{% block content %}
+    {% if data.response %}
+        <div>
+            <p>Response: {{ data.response }}</p>
+            <p>User: {{ data.email }}</p>
+        </div>
+        <p><a href="{% url 'login' %}">Log In</a></p>
+    {%else%}
+        {% block form %}
+            <form action="{% url 'new_user' %}" method="POST">
+                {% csrf_token %}
+                {% render_form serializer template_pack='rest_framework/vertical'%}
+            <input type="submit" value="SingUp">
+            </form>
+        {% endblock form %}
+    {%endif%}
+
+{% endblock content%}

@@ -3,15 +3,16 @@ import environ
 
 env = environ.Env()
 environ.Env.read_env()
+BOT_TOKEN = env('BOT_TOKEN')
 DJANGO_SECRET_KEY = env('DJANGO_SECRET_KEY')
 SINGAPOREAIR_API_KEY = env('SINGAPOREAIR_API_KEY')
 TRANSAVIA_API_KEY = env('TRANSAVIA_API_KEY')
 TURKISHAIRLINES_API_KEY = env('TURKISHAIRLINES_API_KEY')
 TURKISHAIRLINES_SECRET_KEY = env('TURKISHAIRLINES_SECRET_KEY')
 
-NAME_DB = env('NAME_DB')
-USER_DB = env('USER_DB')
-PASSWORD_DB = env('PASSWORD_DB')
+NAME_DB = env('POSTGRES_DB')
+USER_DB = env('POSTGRES_USER')
+PASSWORD_DB = env('POSTGRES_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'hello_world',
     'rest_framework',
     'rest_framework_swagger',
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -74,21 +76,10 @@ WSGI_APPLICATION = 'ticket_locator.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': NAME_DB,
-        'USER': USER_DB,
-        'PASSWORD': PASSWORD_DB,
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -138,3 +129,18 @@ AUTH_USER_MODEL = 'hello_world.User'
 CELERY_BROKER_URL = 'redis://demo_app_redis:6379'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
+
+LOGIN_REDIRECT_URL = 'new_search'
+LOGOUT_REDIRECT_URL = 'new_search'

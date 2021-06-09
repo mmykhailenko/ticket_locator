@@ -31,3 +31,8 @@ typing-extensions==3.10.0.0
 uritemplate==3.0.1
 urllib3==1.26.4
 yarl==1.6.3
+
+aiogram~=2.13
+Flask~=2.0.1
+serializers~=0.2.4
+pyTelegramBotAPI==3.7.9

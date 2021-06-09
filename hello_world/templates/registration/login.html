@@ -1,0 +1,18 @@
+<!-- templates/registration/login.html -->
+{% extends 'index.html' %} &nbsp;
+
+{% block title %}Log In{% endblock %}
+{% block dashboard %}Log In{% endblock %}
+
+{% block content %}
+{% if request.user.is_anonymous %}
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Log In</button>
+    </form><hr>
+    <p><a href="{% url 'new_user' %}">Registration</a></p>
+{% else %}
+<p><a href="{% url 'new_search' %}">Search</a></p>
+{% endif %}
+{% endblock %}
