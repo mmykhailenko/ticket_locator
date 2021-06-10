@@ -124,6 +124,7 @@ pg4.env
 dev.env
 psql.env
 dbdata
+static
 
 
 # Spyder project settings

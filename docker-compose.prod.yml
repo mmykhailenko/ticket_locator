@@ -1,0 +1,118 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: .
+    restart: unless-stopped
+    image: ticket_locator_web
+#    ports:
+#      - "8000:8000"
+    networks:
+      - django_network
+    volumes:
+      - ./static:/static
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate --no-input && python app/manage.py collectstatic --no-input && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000"
+    depends_on:
+      - redis
+      - pgadmin
+      - dbpsql
+
+  bot:
+    image: ticket_locator_web
+    container_name: TelegramBot
+    restart: unless-stopped
+    links:
+      - redis
+    entrypoint: python app/manage.py bot
+    volumes:
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+
+  celery:
+    image: ticket_locator_web
+    container_name: celeryTL
+    restart: unless-stopped
+    links:
+      - redis
+    entrypoint: celery -A ticket_locator worker -l INFO
+    volumes:
+      - ./hello_world:/app/hello_world
+      - ./ticket_locator:/app/ticket_locator
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+      - pgadmin
+      - dbpsql
+
+  flower:
+    image: mher/flower:latest
+    container_name: flowerTL
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    networks:
+      - django_network
+    command:
+      - celery -A ticket_locator flower
+    ports:
+      - 5555:5555
+    depends_on:
+      - celery
+
+  dbpsql:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - ticket_locator/.env
+    restart: unless-stopped
+    hostname: dbpsql
+    networks:
+      - django_network
+    ports:
+      - 9000:5432
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg4_l
+    restart: unless-stopped
+    env_file:
+      - ticket_locator/.env
+    ports:
+      - 5500:80
+    depends_on:
+      - dbpsql
+    networks:
+      - django_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - django_network
+    ports:
+      - 6379:6379
+
+  nginx:
+    build: ./nginx
+    volumes:
+    - ./static:/static
+    ports:
+    - "80:80"
+    depends_on:
+      - web
+    networks:
+      - django_network
+
+networks:
+  django_network:
