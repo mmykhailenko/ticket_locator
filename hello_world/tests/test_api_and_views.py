@@ -24,7 +24,7 @@ class UserViewTest(APITestCase):
         self.assertEqual(self.user2.is_superuser and self.user1.is_superuser, False)
 
     def test_get_pk(self):
-        url = reverse("user_detail", args="1")
+        url = reverse("user_detail", args=[1])
         response = self.client.get(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(UserDetailSerializer(self.user1).data, response.data)
@@ -57,11 +57,11 @@ class SearchHistoryViewTest(APITestCase):
                          response.data)
 
     def test_get_search_history_pk(self):
-        url = reverse("history_detail", args="1")
+        url = reverse("history_detail", args=[1])
         response = self.client.get(url)
         response_dict = (json.loads(json.dumps(response.data)))[0]
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual((SearchHistorySerializer(self.history_test_unit1)).data, response_dict)
+        self.assertEqual(SearchHistorySerializer(self.history_test_unit1).data, response_dict)
 
 
 class FlightSearchViewTest(APITestCase):

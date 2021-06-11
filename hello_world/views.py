@@ -91,10 +91,12 @@ class FlightSearchView(GenericAPIView):
         return result
 
     def post(self, request):
-        if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
-            result = self.get_air_info(request.data)
-            return Response(result)
-        return Response({"Error": "Please fill all fields."})
+        try:
+            if request.data["departure_airport"] and request.data["arrival_airport"] and request.data["departure_date"]:
+                result = self.get_air_info(request.data)
+                return Response(result)
+        except MultiValueDictKeyError:
+            return Response({"Error": "Please fill all fields."})
 
 
 class SearchAirRoute(View):  # view for which renders and processes the search form on the main page
