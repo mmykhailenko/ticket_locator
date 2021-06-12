@@ -14,7 +14,6 @@ services:
     entrypoint: sh -c "python app/manage.py makemigrations && python app/manage.py migrate --no-input && python app/manage.py collectstatic --no-input && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000"
     depends_on:
       - redis
-      - pgadmin
 
   bot:
     image: ticket_locator_web
@@ -47,32 +46,6 @@ services:
     depends_on:
       - web
       - redis
-      - pgadmin
-
-  flower:
-    image: mher/flower:latest
-    container_name: flowerTL
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-    networks:
-      - django_network
-    command:
-      - celery -A ticket_locator flower
-    ports:
-      - 5555:5555
-    depends_on:
-      - celery
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pg4_l
-    restart: unless-stopped
-    env_file:
-      - ticket_locator/.env
-    ports:
-      - 5500:80
-    networks:
-      - django_network
 
   redis:
     image: redis:alpine
