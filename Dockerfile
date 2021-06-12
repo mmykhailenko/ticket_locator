@@ -1,5 +1,6 @@
 FROM python:3.8.9-alpine3.13
 WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 COPY hello_world app/hello_world
 COPY ticket_locator app/ticket_locator

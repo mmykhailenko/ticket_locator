@@ -1,4 +1,8 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    UserChangeForm,
+    AuthenticationForm,
+)
 from django import forms
 
 from .models import User
@@ -17,7 +21,6 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class SearchAirRouteForm(forms.Form):
-    ##################### Widgets ############################
     departure_airport_widget = forms.TextInput(
         attrs={
             "placeholder": "Откуда:",
@@ -25,7 +28,7 @@ class SearchAirRouteForm(forms.Form):
             "class": "form-control mt-4",
             "type": "text",
             "pattern": "[A-Z]{3}",
-            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...'
+            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...',
         }
     )
     arrival_airport_widget = forms.DateInput(
@@ -35,19 +38,20 @@ class SearchAirRouteForm(forms.Form):
             "class": "form-control mt-4",
             "type": "text",
             "pattern": "[A-Z]{3}",
-            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...'
+            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...',
         }
     )
     departure_date_widget = forms.DateInput(
-        attrs={
-            "required": True,
-            "class": "form-control mt-4",
-            "type": "date"
-        }
+        attrs={"required": True, "class": "form-control mt-4", "type": "date"}
     )
-    ######################### Form ###############################
-    departure_airport = forms.CharField(max_length=3, widget=departure_airport_widget)
-    arrival_airport = forms.CharField(max_length=3, widget=arrival_airport_widget)
+    departure_airport = forms.CharField(
+        max_length=3,
+        widget=departure_airport_widget
+    )
+    arrival_airport = forms.CharField(
+        max_length=3,
+        widget=arrival_airport_widget
+    )
     departure_date = forms.DateField(widget=departure_date_widget)
     direct_flight = forms.BooleanField(required=False)
 
@@ -59,7 +63,11 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('email', 'password1', 'password2', )
+        fields = (
+            "email",
+            "password1",
+            "password2",
+        )
 
 
 class LoginForm(AuthenticationForm):
@@ -68,4 +76,4 @@ class LoginForm(AuthenticationForm):
 
     class Meta:
         model = User
-        fields = ('email', 'password')
+        fields = ("email", "password")

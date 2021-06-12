@@ -20,7 +20,12 @@ class TransaviaService(AirCompanyService):
         params["destination"] = kwargs["arrival_airport"]
         params["originDepartureDate"] = kwargs["date"]
 
-    def get_flight_info_by_date(self, departure_airport, arrival_airport, date):
+    def get_flight_info_by_date(
+            self,
+            departure_airport,
+            arrival_airport,
+            date
+    ):
 
         response_service = []
 
@@ -41,10 +46,13 @@ class TransaviaService(AirCompanyService):
             for flight in flights:
                 flight_info = flight["outboundFlight"]
                 response_map = {
-                    "Airline": flight_info["marketingAirline"]["companyShortName"],
+                    "Airline": flight_info["marketingAirline"]
+                    ["companyShortName"],
                     "FlightNumber": str(flight_info["flightNumber"]),
-                    "DepartureAirport": flight_info["departureAirport"]["locationCode"],
-                    "ArrivalAirport": flight_info["arrivalAirport"]["locationCode"],
+                    "DepartureAirport": flight_info["departureAirport"]
+                    ["locationCode"],
+                    "ArrivalAirport": flight_info["arrivalAirport"]
+                    ["locationCode"],
                     "DepartureTime": flight_info["departureDateTime"],
                     "ArrivalTime": flight_info["arrivalDateTime"],
                 }

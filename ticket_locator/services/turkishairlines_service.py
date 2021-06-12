@@ -55,8 +55,10 @@ class TurkishAirlinesService(AirCompanyService):
             .upper()
         )
         params = self._params["OriginDestinationInformation"][0]
-        params["OriginLocation"]["LocationCode"] = kwargs["departure_airport"]
-        params["DestinationLocation"]["LocationCode"] = kwargs["arrival_airport"]
+        params["OriginLocation"]["LocationCode"] = \
+            kwargs["departure_airport"]
+        params["DestinationLocation"]["LocationCode"] = \
+            kwargs["arrival_airport"]
         params["DepartureDateTime"]["Date"] = date
 
     @staticmethod
@@ -71,7 +73,12 @@ class TurkishAirlinesService(AirCompanyService):
         }
         return response_map
 
-    def get_flight_info_by_date(self, departure_airport, arrival_airport, date):
+    def get_flight_info_by_date(
+            self,
+            departure_airport,
+            arrival_airport,
+            date
+    ):
 
         response_service = []
 
@@ -82,7 +89,9 @@ class TurkishAirlinesService(AirCompanyService):
         )
 
         response = requests.post(
-            self._BASE_URL, data=json.dumps(self._params), headers=self._headers
+            self._BASE_URL,
+            data=json.dumps(self._params),
+            headers=self._headers
         )
 
         if response.status_code == 200:
@@ -103,10 +112,14 @@ class TurkishAirlinesService(AirCompanyService):
                         if isinstance(routes, list):
                             routes_list = []
                             for route in routes:
-                                routes_list.append(self._get_flight_data(route))
+                                routes_list.append(
+                                    self._get_flight_data(route)
+                                )
                             response_service.append(routes_list)
                         else:
-                            response_service.append([self._get_flight_data(routes)])
+                            response_service.append(
+                                [self._get_flight_data(routes)]
+                            )
                 else:
                     routes = segments["FlightSegment"]
                     if isinstance(routes, list):
@@ -115,7 +128,9 @@ class TurkishAirlinesService(AirCompanyService):
                             routes_list.append(self._get_flight_data(route))
                         response_service.append(routes_list)
                     else:
-                        response_service.append([self._get_flight_data(routes)])
+                        response_service.append(
+                            [self._get_flight_data(routes)]
+                        )
 
             return response_service
 
