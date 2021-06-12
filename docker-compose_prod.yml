@@ -20,7 +20,6 @@ services:
     depends_on:
       - redis
       - pgadmin
-      - dbpsql
 
   bot:
     image: ticket_locator_web
@@ -52,7 +51,6 @@ services:
       - web
       - redis
       - pgadmin
-      - dbpsql
 
   flower:
     image: mher/flower:latest
@@ -98,7 +96,6 @@ services:
     ports:
       - 80:80
     depends_on:
-      - dbpsql
       - web
       - redis
     networks:
