@@ -1,4 +1,8 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    UserChangeForm,
+    AuthenticationForm,
+)
 from django import forms
 
 from .models import User
@@ -25,7 +29,7 @@ class SearchAirRouteForm(forms.Form):
             "class": "form-control mt-4",
             "type": "text",
             "pattern": "[A-Z]{3}",
-            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...'
+            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...',
         }
     )
     arrival_airport_widget = forms.DateInput(
@@ -35,15 +39,11 @@ class SearchAirRouteForm(forms.Form):
             "class": "form-control mt-4",
             "type": "text",
             "pattern": "[A-Z]{3}",
-            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...'
+            "title": 'IATA код аэропорта. Пример: "BCN", "AMS" ...',
         }
     )
     departure_date_widget = forms.DateInput(
-        attrs={
-            "required": True,
-            "class": "form-control mt-4",
-            "type": "date"
-        }
+        attrs={"required": True, "class": "form-control mt-4", "type": "date"}
     )
     ######################### Form ###############################
     departure_airport = forms.CharField(max_length=3, widget=departure_airport_widget)
@@ -52,8 +52,8 @@ class SearchAirRouteForm(forms.Form):
     direct_flight = forms.BooleanField(required=False)
 
     def clean_departure_date(self):
-        data = self.cleaned_data['departure_date']
-        prepared_date = (data.strftime('%Y-%m-%d'))
+        data = self.cleaned_data["departure_date"]
+        prepared_date = data.strftime("%Y-%m-%d")
         return prepared_date
 
 
@@ -64,7 +64,11 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('email', 'password1', 'password2', )
+        fields = (
+            "email",
+            "password1",
+            "password2",
+        )
 
 
 class LoginForm(AuthenticationForm):
@@ -73,4 +77,4 @@ class LoginForm(AuthenticationForm):
 
     class Meta:
         model = User
-        fields = ('email', 'password')
+        fields = ("email", "password")
