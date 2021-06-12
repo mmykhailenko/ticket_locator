@@ -35,8 +35,14 @@ class SearchHistorySerializer(serializers.ModelSerializer):
 
 
 class FlightSearchSerializer(serializers.Serializer):
-    departure_airport = serializers.CharField(max_length=3, help_text="IATA format")
-    arrival_airport = serializers.CharField(max_length=3, help_text="IATA format")
+    departure_airport = serializers.CharField(
+        max_length=3,
+        help_text="IATA format"
+    )
+    arrival_airport = serializers.CharField(
+        max_length=3,
+        help_text="IATA format"
+    )
     departure_date = serializers.DateField()
     direct_flight = serializers.BooleanField(required=True)
 

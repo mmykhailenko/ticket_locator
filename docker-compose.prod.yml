@@ -5,19 +5,16 @@ services:
       context: .
     restart: unless-stopped
     image: ticket_locator_web
-#    ports:
-#      - "8000:8000"
     networks:
       - django_network
     volumes:
       - ./static:/static
       - ./hello_world:/app/hello_world
       - ./ticket_locator:/app/ticket_locator
-    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate --no-input && python app/manage.py collectstatic --no-input && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000"
+    entrypoint: sh -c "python app/manage.py makemigrations && python app/manage.py migrate --no-input && python app/manage.py collectstatic --no-input && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000"
     depends_on:
       - redis
       - pgadmin
-      - dbpsql
 
   bot:
     image: ticket_locator_web
@@ -51,7 +48,6 @@ services:
       - web
       - redis
       - pgadmin
-      - dbpsql
 
   flower:
     image: mher/flower:latest
@@ -67,20 +63,6 @@ services:
     depends_on:
       - celery
 
-  dbpsql:
-    image: postgres:latest
-    container_name: postgres
-    env_file:
-      - ticket_locator/.env
-    restart: unless-stopped
-    hostname: dbpsql
-    networks:
-      - django_network
-    ports:
-      - 9000:5432
-    volumes:
-      - ./dbdata:/var/lib/postgresql/data
-
   pgadmin:
     image: dpage/pgadmin4
     container_name: pg4_l
@@ -89,8 +71,6 @@ services:
       - ticket_locator/.env
     ports:
       - 5500:80
-    depends_on:
-      - dbpsql
     networks:
       - django_network
 

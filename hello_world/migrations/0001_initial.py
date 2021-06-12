@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -26,7 +25,8 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("password",
+                 models.CharField(max_length=128, verbose_name="password")),
                 (
                     "last_login",
                     models.DateTimeField(
@@ -37,23 +37,30 @@ class Migration(migrations.Migration):
                     "is_superuser",
                     models.BooleanField(
                         default=False,
-                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        help_text="Designates that this user has all "
+                                  "permissions without explicitly assigning "
+                                  "them.",
                         verbose_name="superuser status",
                     ),
                 ),
                 (
                     "email",
                     models.EmailField(
-                        max_length=254, unique=True, verbose_name="email address"
+                        max_length=254, unique=True,
+                        verbose_name="email address"
                     ),
                 ),
-                ("is_staff", models.BooleanField(default=False, verbose_name="staff")),
-                ("is_active", models.BooleanField(default=True, verbose_name="active")),
+                ("is_staff",
+                 models.BooleanField(default=False, verbose_name="staff")),
+                ("is_active",
+                 models.BooleanField(default=True, verbose_name="active")),
                 (
                     "groups",
                     models.ManyToManyField(
                         blank=True,
-                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        help_text="The groups this user belongs to. "
+                                  "A user will get all permissions granted to "
+                                  "each of their groups.",
                         related_name="user_set",
                         related_query_name="user",
                         to="auth.Group",
@@ -91,14 +98,18 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "departure_city",
-                    models.CharField(max_length=128, verbose_name="Departure city"),
+                    models.CharField(max_length=128,
+                                     verbose_name="Departure city"),
                 ),
                 (
                     "arrival_city",
-                    models.CharField(max_length=128, verbose_name="Arrival city"),
+                    models.CharField(max_length=128,
+                                     verbose_name="Arrival city"),
                 ),
-                ("departure_date", models.DateTimeField(verbose_name="Departure date")),
-                ("arrival_date", models.DateTimeField(verbose_name="Arrival date")),
+                ("departure_date",
+                 models.DateTimeField(verbose_name="Departure date")),
+                ("arrival_date",
+                 models.DateTimeField(verbose_name="Arrival date")),
                 (
                     "user",
                     models.ForeignKey(
