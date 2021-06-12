@@ -74,8 +74,6 @@ services:
       - ticket_locator/.env
     ports:
       - 5500:80
-    depends_on:
-      - dbpsql
     networks:
       - django_network
 
