@@ -6,8 +6,6 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     image: ticket_locator_web
-#    ports:
-#      - 8000:8000
     expose:
       - 8000
     networks:
@@ -17,11 +15,8 @@ services:
     entrypoint:
       - /app/entrypoint.sh
     volumes:
-#      - ./hello_world:/hello_world
-#      - ./ticket_locator:/ticket_locator
       - ./:/app
       - ./static:/static
-#    command: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py collectstatic && python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py init_admin && gunicorn ticket_locator.wsgi:application --bind 0.0.0.0:8000 --reload"
     depends_on:
       - redis
       - pgadmin
@@ -35,8 +30,6 @@ services:
       - redis
     entrypoint: python manage.py bot
     volumes:
-#      - ./hello_world:/hello_world
-#      - ./ticket_locator:/ticket_locator
       - ./:/app
     networks:
       - django_network
@@ -52,8 +45,6 @@ services:
       - redis
     entrypoint: celery -A ticket_locator worker -l INFO
     volumes:
-#      - ./hello_world:/hello_world
-#      - ./ticket_locator:/ticket_locator
       - ./:/app
     networks:
       - django_network
@@ -121,7 +112,6 @@ services:
       - ./static:/static
     ports:
       - 1337:80
-#    entrypoint: nginx -s reload
     depends_on:
       - dbpsql
       - web
@@ -132,6 +122,3 @@ services:
 
 networks:
   django_network:
-#
-#volumes:
-#  static:
