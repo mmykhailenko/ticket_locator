@@ -1,0 +1,103 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    image: ticket_locator_web
+    expose:
+      - 8000
+    networks:
+      - django_network
+    env_file:
+      - ticket_locator/.env
+    entrypoint:
+      - /app/entrypoint.sh
+    volumes:
+      - ./:/app
+      - ./static:/static
+    depends_on:
+      - redis
+      - pgadmin
+
+  bot:
+    image: ticket_locator_web
+    container_name: TelegramBot
+    restart: unless-stopped
+    links:
+      - redis
+    entrypoint: python manage.py bot
+    volumes:
+      - ./:/app
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+
+  celery:
+    image: ticket_locator_web
+    container_name: celeryTL
+    restart: unless-stopped
+    links:
+      - redis
+    entrypoint: celery -A ticket_locator worker -l INFO
+    volumes:
+      - ./:/app
+    networks:
+      - django_network
+    depends_on:
+      - web
+      - redis
+      - pgadmin
+
+  flower:
+    image: mher/flower:latest
+    container_name: flowerTL
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    networks:
+      - django_network
+    command:
+      - celery -A ticket_locator flower
+    ports:
+      - 5555:5555
+    depends_on:
+      - celery
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg4_l
+    restart: unless-stopped
+    env_file:
+      - ticket_locator/.env
+    ports:
+      - 5500:80
+    networks:
+      - django_network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - django_network
+    ports:
+      - 6379:6379
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_TL
+    volumes:
+      - ./static:/static
+    ports:
+      - 80:80
+    depends_on:
+      - web
+      - redis
+    networks:
+      - django_network
+
+networks:
+  django_network:

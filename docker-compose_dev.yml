@@ -3,16 +3,20 @@ services:
   web:
     build:
       context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     image: ticket_locator_web
-    ports:
-      - 127.0.0.1:8000:8000
+    expose:
+      - 8000
     networks:
       - django_network
+    env_file:
+      - ticket_locator/.env
+    entrypoint:
+      - /app/entrypoint.sh
     volumes:
-      - ./hello_world:/app/hello_world
-      - ./ticket_locator:/app/ticket_locator
-    entrypoint: sh -c "app/wait-for-it.sh dbpsql:5432 -- python app/manage.py makemigrations && python app/manage.py migrate && python app/manage.py init_admin && python app/manage.py runserver 0.0.0.0:8000"
+      - ./:/app
+      - ./static:/static
     depends_on:
       - redis
       - pgadmin
@@ -24,10 +28,9 @@ services:
     restart: unless-stopped
     links:
       - redis
-    entrypoint: python app/manage.py bot
+    entrypoint: python manage.py bot
     volumes:
-      - ./hello_world:/app/hello_world
-      - ./ticket_locator:/app/ticket_locator
+      - ./:/app
     networks:
       - django_network
     depends_on:
@@ -42,8 +45,7 @@ services:
       - redis
     entrypoint: celery -A ticket_locator worker -l INFO
     volumes:
-      - ./hello_world:/app/hello_world
-      - ./ticket_locator:/app/ticket_locator
+      - ./:/app
     networks:
       - django_network
     depends_on:
@@ -51,6 +53,7 @@ services:
       - redis
       - pgadmin
       - dbpsql
+
 
   flower:
     image: mher/flower:latest
@@ -101,6 +104,21 @@ services:
       - django_network
     ports:
       - 6379:6379
+
+  nginx:
+    build: ./nginx
+    container_name: nginx_TL
+    volumes:
+      - ./static:/static
+    ports:
+      - 1337:80
+    depends_on:
+      - dbpsql
+      - web
+      - redis
+    networks:
+      - django_network
+
 
 networks:
   django_network:
